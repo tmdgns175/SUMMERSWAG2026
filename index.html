@@ -23,13 +23,13 @@ body{font-family:'Malgun Gothic','Apple SD Gothic Neo',sans-serif;background:var
 .tabs{display:flex;gap:4px;padding:10px 20px 0;background:#fff;border-bottom:2px solid var(--border);flex-shrink:0}
 .tab{padding:7px 16px;border:1px solid var(--border);border-bottom:none;border-radius:6px 6px 0 0;background:var(--bg2);cursor:pointer;font-size:12px;font-weight:600;color:var(--muted);position:relative;bottom:-2px;transition:all .15s}
 .tab:hover{background:#e9ecef;color:var(--navy)}
-.tab.on{background:#fff;color:var(--navy);border-bottom:2px solid #fff}
+.tab.on{background:#fff;color:var(--navy);border-bottom:2px solid #fff;border-top:3px solid var(--red);font-weight:700;box-shadow:0 -3px 10px rgba(26,58,95,.13);font-size:12.5px}
 .tab-n{display:inline-block;background:var(--navy);color:#fff;border-radius:10px;padding:1px 6px;font-size:10px;margin-left:5px}
 .tab.on .tab-n{background:var(--red)}
 /* 27일(본공연) 탭 강조 */
 .tab.map-day{border-color:#8e6bbf;color:#5a3a8a}
 .tab.map-day:hover{background:#f0eaff;color:#4a2a7a}
-.tab.map-day.on{background:#fff;color:#4a2a7a;border-color:#8e6bbf;border-bottom:2px solid #fff}
+.tab.map-day.on{background:#fff;color:#4a2a7a;border-color:#8e6bbf;border-bottom:2px solid #fff;border-top:3px solid #7c4dba;font-weight:700;box-shadow:0 -3px 10px rgba(124,77,186,.18);font-size:12.5px}
 .tab.map-day.on .tab-n{background:#7c4dba}
 .tab-map-badge{display:inline-flex;align-items:center;gap:3px;background:#f0eaff;color:#5a3a8a;border:1px solid #c5a8e8;border-radius:8px;padding:1px 6px;font-size:9px;font-weight:700;margin-left:6px;vertical-align:middle}
 /* 뷰 토글: 27일 탭에서만 표시 */
@@ -951,8 +951,6 @@ function startNameEdit(spanEl, oldName, e) {
       if (w) w.name = newName;
       // 현재 선택된 요원 참조도 갱신
       if (selWorker && selWorker.name === oldName) selWorker.name = newName;
-      curSearch = newName; // 검색 필드도 새 이름으로
-      document.getElementById('searchInput').value = newName;
     }
     renderGantt();
     // 저장 후 선택 유지 + 도면 핀 갱신

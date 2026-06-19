@@ -253,6 +253,133 @@ body{font-family:'Malgun Gothic','Apple SD Gothic Neo',sans-serif;background:var
   cursor:pointer;transition:background .12s,color .12s;white-space:nowrap;
 }
 #addGroupBtn:hover{background:var(--navy);color:#fff}
+
+/* ════════════════════════════════════════════════════
+   RESPONSIVE — 모바일·태블릿 최적화
+════════════════════════════════════════════════════ */
+
+/* ▷ 태블릿 (≤1024px) */
+@media(max-width:1024px){
+  .hdr h1{font-size:14px}
+  .hdr p{font-size:10px;opacity:.7}
+  .flt-btn{padding:4px 9px;font-size:11px}
+  .vt-btn{padding:4px 9px;font-size:11px}
+}
+
+/* ▷ 모바일 (≤768px) */
+@media(max-width:768px){
+  /* 헤더 */
+  .hdr{padding:8px 12px;gap:8px;flex-wrap:nowrap}
+  .hdr h1{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .hdr p{display:none}
+  .hdr-badge{font-size:9px;padding:2px 8px;flex-shrink:0}
+
+  /* 탭 — 가로 스크롤 */
+  .tabs{padding:5px 10px 0;gap:2px;overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{padding:5px 10px;font-size:11px;flex-shrink:0;white-space:nowrap}
+  .tab.on{font-size:11.5px}
+  .tab.map-day.on{font-size:11.5px}
+  .tab-map-badge{display:none}
+
+  /* 툴바 */
+  .toolbar{padding:6px 10px;gap:5px;flex-wrap:wrap}
+  .search-box{flex:1;min-width:120px}
+  .search-box input{width:100%}
+  .tb-sep{display:none}
+  .filter-lbl{display:none}
+  .zoom-grp{margin-left:0;gap:3px}
+  .z-btn{width:28px;height:28px;font-size:14px;touch-action:manipulation}
+  .z-val{font-size:11px;min-width:30px}
+  .flt-btn{padding:5px 8px;font-size:10.5px;touch-action:manipulation}
+  .vt-btn{padding:5px 8px;font-size:10.5px;touch-action:manipulation}
+  .tab{touch-action:manipulation}
+  #addGroupBtn{padding:5px 10px;font-size:10.5px}
+
+  /* 통계 — 가로 스크롤 */
+  .stats{padding:5px 10px;gap:6px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .stats::-webkit-scrollbar{display:none}
+  .sc{flex-shrink:0;padding:4px 8px;gap:5px}
+  .sc label{font-size:9px}
+  .sc b{font-size:12px}
+  .legend{display:none}
+
+  /* 메인 — 세로 스택 */
+  body{height:auto;min-height:100dvh;overflow-y:auto}
+  .main{flex-direction:column;height:auto;overflow:visible;gap:0}
+
+  .gantt-panel,.gantt-panel.half{
+    flex:none!important;
+    width:100%!important;
+    height:55vh;
+    height:55dvh;
+    border-right:none;
+    border-bottom:2px solid var(--border);
+    overflow:hidden;
+  }
+  .gantt-panel.full{
+    flex:none!important;
+    width:100%!important;
+    height:80vh;
+    height:80dvh;
+    border-bottom:none;
+  }
+  .map-panel:not(.hidden){
+    flex:none!important;
+    width:100%!important;
+    height:50vh;
+    height:50dvh;
+  }
+  .map-panel.full{
+    flex:none!important;
+    width:100%!important;
+    height:80vh;
+    height:80dvh;
+  }
+  .map-panel.hidden{
+    flex:none!important;
+    height:0!important;
+    overflow:hidden;
+  }
+
+  /* 간트 행 요소 축소 */
+  .rn{width:18px;font-size:9px}
+  .rname{font-size:11px}
+  .rtask{font-size:9px;padding:1px 4px}
+  .drag-handle{padding:0 3px;font-size:12px}
+  .name-edit-btn{width:16px;height:16px;font-size:9px;margin-left:-1px}
+  .loc-badge{font-size:9px;padding:1px 5px}
+  .grp-badge{font-size:10px;padding:1px 5px}
+  .bar{touch-action:none}
+
+  /* 맵 패널 */
+  .map-hdr{padding:8px 10px;font-size:12px}
+  .map-hdr span{display:none}
+  .map-zoom-bar{padding:4px 10px;gap:4px}
+  .mzb{width:28px;height:28px;touch-action:manipulation}
+  #mzLevel{font-size:10px;min-width:32px}
+  .mzb-reset{font-size:9px;padding:0 6px}
+  .map-scroll{padding:8px;gap:8px}
+  .duty-panel{padding:8px 10px;font-size:11px}
+  .duty-live-badge{font-size:10px;padding:2px 8px}
+  .map-info.none{padding:12px;font-size:11px}
+
+  /* 풋터 */
+  .ftr{padding:4px 12px;font-size:9px}
+}
+
+/* ▷ 소형 모바일 (≤480px) */
+@media(max-width:480px){
+  .hdr-badge{display:none}
+  .hdr h1{font-size:12px}
+  .tab{padding:4px 8px;font-size:10.5px}
+  .flt-btn{padding:4px 7px;font-size:10px}
+  .gantt-panel,.gantt-panel.half{height:52vh;height:52dvh}
+  .gantt-panel.full{height:78vh;height:78dvh}
+  .map-panel:not(.hidden){height:48vh;height:48dvh}
+  .map-panel.full{height:78vh;height:78dvh}
+  .rtask{display:none}
+}
 </style>
 </head>
 <body>
@@ -558,9 +685,17 @@ const WORK_H=[13,14,15,16,17,18,19,20,21];
 // ═══════════════════════════════════════════════════
 function hw(){return Math.round(zoomLv*0.52)} // hour width px
 
+// ─ 반응형 레이블 폭 계산 (화면 너비별)
+function getLW(){
+  const w=window.innerWidth;
+  if(w<=480) return curDay===2?'190px':'130px';
+  if(w<=768) return curDay===2?'240px':'170px';
+  return curDay===2?'340px':'260px';
+}
+
 function renderGantt(){
-  // 27일 탭은 위치 텍스트까지 표시해야 하므로 레이블 폭 확장
-  document.documentElement.style.setProperty('--lw', curDay === 2 ? '340px' : '260px');
+  // 27일 탭은 위치 텍스트까지 표시해야 하므로 레이블 폭 확장 (반응형)
+  document.documentElement.style.setProperty('--lw', getLW());
 
   const d=DAYS[curDay];
   const workers=d.workers;
@@ -1431,6 +1566,16 @@ setInterval(tick,1000); tick();
 // ═══════════════════════════════════════════════════
 setMapPanelForDay(0);  // 도면 패널 숨김 + Gantt 전체 너비
 renderGantt();
+
+// 화면 크기·방향 변경 시 재렌더링 (모바일 방향전환 등)
+let _resizeTimer=null;
+window.addEventListener('resize',()=>{
+  clearTimeout(_resizeTimer);
+  _resizeTimer=setTimeout(()=>{
+    document.documentElement.style.setProperty('--lw',getLW());
+    renderGantt();
+  },200);
+});
 </script>
 </body>
 </html>

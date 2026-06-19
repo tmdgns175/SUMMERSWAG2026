@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>2026 흠뻑쇼 의정부 – 근무투입현황 시스템</title>
+<style>
+:root{
+  --navy:#1A3A5F;--navy2:#2D5285;--red:#D90429;--bg:#FDFDFD;--bg2:#F4F6F8;
+  --border:#DEE2E6;--text:#212529;--muted:#6C757D;--shadow:0 2px 10px rgba(0,0,0,.12);
+  --pink:#FF99CC;--pink2:#FF66AA;--orange:#E67E22;--sky:#5DADE2;
+  --row-h:34px;--lw:260px;--hw:52px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Malgun Gothic','Apple SD Gothic Neo',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+
+/* ── HEADER ── */
+.hdr{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);color:#fff;padding:10px 20px;display:flex;align-items:center;gap:12px;flex-shrink:0;box-shadow:var(--shadow)}
+.hdr h1{font-size:16px;font-weight:700}.hdr p{font-size:11px;opacity:.7;margin-top:1px}
+.hdr-badge{margin-left:auto;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:3px 12px;font-size:11px;white-space:nowrap}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:4px;padding:10px 20px 0;background:#fff;border-bottom:2px solid var(--border);flex-shrink:0}
+.tab{padding:7px 16px;border:1px solid var(--border);border-bottom:none;border-radius:6px 6px 0 0;background:var(--bg2);cursor:pointer;font-size:12px;font-weight:600;color:var(--muted);position:relative;bottom:-2px;transition:all .15s}
+.tab:hover{background:#e9ecef;color:var(--navy)}
+.tab.on{background:#fff;color:var(--navy);border-bottom:2px solid #fff}
+.tab-n{display:inline-block;background:var(--navy);color:#fff;border-radius:10px;padding:1px 6px;font-size:10px;margin-left:5px}
+.tab.on .tab-n{background:var(--red)}
+/* 27일(본공연) 탭 강조 */
+.tab.map-day{border-color:#8e6bbf;color:#5a3a8a}
+.tab.map-day:hover{background:#f0eaff;color:#4a2a7a}
+.tab.map-day.on{background:#fff;color:#4a2a7a;border-color:#8e6bbf;border-bottom:2px solid #fff}
+.tab.map-day.on .tab-n{background:#7c4dba}
+.tab-map-badge{display:inline-flex;align-items:center;gap:3px;background:#f0eaff;color:#5a3a8a;border:1px solid #c5a8e8;border-radius:8px;padding:1px 6px;font-size:9px;font-weight:700;margin-left:6px;vertical-align:middle}
+/* 뷰 토글: 27일 탭에서만 표시 */
+#viewToggleWrap{transition:opacity .2s}
+#viewToggleWrap.hidden-ctrl{opacity:0;pointer-events:none}
+/* 도면 패널 토글 버튼 */
+.map-toggle-btn{margin-left:auto;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);border-radius:6px;padding:3px 10px;font-size:11px;color:#fff;cursor:pointer;white-space:nowrap;transition:background .15s}
+.map-toggle-btn:hover{background:rgba(255,255,255,.3)}
+
+/* ── TOOLBAR ── */
+.toolbar{display:flex;gap:8px;padding:8px 20px;background:#fff;border-bottom:1px solid var(--border);align-items:center;flex-wrap:wrap;flex-shrink:0}
+.search-box{display:flex;align-items:center;gap:6px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:5px 10px;min-width:200px}
+.search-box input{border:none;background:none;font-size:12px;outline:none;width:140px;font-family:inherit}
+.search-box .clear-btn{cursor:pointer;color:var(--muted);font-size:14px;line-height:1}
+.tb-sep{width:1px;height:22px;background:var(--border);flex-shrink:0}
+.filter-lbl{font-size:11px;color:var(--muted);font-weight:600;white-space:nowrap}
+.flt-btn{padding:4px 10px;border:1px solid var(--border);border-radius:16px;background:var(--bg2);font-size:11px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.flt-btn:hover{border-color:var(--navy);color:var(--navy)}
+.flt-btn.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.flt-btn.pink.on{background:var(--pink2);border-color:var(--pink2)}
+.flt-btn.orange.on{background:var(--orange);border-color:var(--orange)}
+.zoom-grp{display:flex;align-items:center;gap:4px;margin-left:auto}
+.zoom-grp span{font-size:11px;color:var(--muted)}
+.z-btn{width:24px;height:24px;border:1px solid var(--border);border-radius:5px;background:var(--bg2);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.z-btn:hover{background:#dde}
+.z-val{font-size:12px;font-weight:600;color:var(--navy);width:36px;text-align:center}
+.view-toggle{display:flex;gap:4px}
+.vt-btn{padding:4px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);font-size:11px;cursor:pointer;transition:all .15s}
+.vt-btn.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+
+/* ── STATS ── */
+.stats{display:flex;gap:10px;padding:7px 20px;background:#fff;border-bottom:1px solid var(--border);flex-wrap:wrap;flex-shrink:0}
+.sc{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--navy);border-radius:7px;padding:5px 12px;font-size:11px}
+.sc.r{border-left-color:var(--red)}.sc.p{border-left-color:var(--pink2)}.sc.o{border-left-color:var(--orange)}
+.sc label{color:var(--muted);display:block;font-size:10px}.sc b{font-size:14px;font-weight:700;color:var(--navy)}
+.sc.r b{color:var(--red)}.sc.p b{color:#b04070}.sc.o b{color:var(--orange)}
+
+/* ── MAIN CONTENT ── */
+.main{display:flex;flex:1;overflow:hidden;gap:0}
+
+/* ── GANTT PANEL ── */
+.gantt-panel{flex:1;overflow:hidden;display:flex;flex-direction:column;border-right:2px solid var(--border);transition:flex .3s}
+.gantt-panel.full{flex:1}.gantt-panel.half{flex:0 0 58%}
+.gantt-scroll{overflow:auto;flex:1;position:relative}
+.gantt-inner{position:relative}
+
+/* ── GANTT HEADER ── */
+.gh{display:flex;position:sticky;top:0;z-index:20;background:var(--navy);color:#fff;border-bottom:2px solid var(--navy2)}
+.gh-lbl{width:var(--lw);min-width:var(--lw);padding:7px 12px;font-size:11px;font-weight:700;border-right:2px solid rgba(255,255,255,.2);position:sticky;left:0;background:var(--navy);z-index:21;display:flex;align-items:center;gap:6px}
+.gh-tl{display:flex}
+.hc{text-align:center;font-size:10px;font-weight:600;padding:5px 0;border-right:1px solid rgba(255,255,255,.12);cursor:default}
+.hc.night{background:rgba(0,0,0,.22)}.hc.work{background:rgba(255,153,204,.22)}
+
+/* ── GROUP HEADER ── */
+.grp-hdr{display:flex;background:linear-gradient(to right,#EEF3FA,#f8f9fa);border-top:2px solid var(--navy);border-bottom:1px solid #b8c8da;cursor:pointer;user-select:none;transition:background .15s}
+.grp-hdr:hover{background:linear-gradient(to right,#dce8f5,#edf2f7)}
+.grp-lbl{width:var(--lw);min-width:var(--lw);padding:5px 12px;font-size:12px;font-weight:700;color:var(--navy);border-right:2px solid var(--navy);position:sticky;left:0;background:#EEF3FA;display:flex;align-items:center;gap:6px}
+.grp-badge{background:var(--navy);color:#fff;border-radius:4px;padding:1px 7px;font-size:11px}
+.grp-arrow{font-size:10px;margin-left:auto;transition:transform .2s}
+.grp-hdr.collapsed .grp-arrow{transform:rotate(-90deg)}
+.grp-tl{flex:1;display:flex}
+.ghb{border-right:1px solid #dde;background:transparent}
+
+/* ── WORKER ROW ── */
+.wr{display:flex;border-bottom:1px solid var(--border);transition:background .1s;overflow:visible}
+.wr:hover{background:#F0F4FF!important}
+.wr.hl{background:#FFF0F5!important;outline:2px solid var(--pink2);outline-offset:-2px}
+.wr.dim{opacity:.3}
+.wr.hidden{display:none}
+.rl{width:var(--lw);min-width:var(--lw);display:flex;align-items:center;padding:0 8px;gap:5px;border-right:2px solid var(--navy);font-size:12px;position:sticky;left:0;background:inherit;z-index:10;cursor:pointer}
+.rn{width:22px;text-align:center;font-size:10px;color:#fff;background:var(--navy);border-radius:3px;padding:1px 0;flex-shrink:0}
+.rname{font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rtask{font-size:10px;padding:1px 6px;border-radius:10px;white-space:nowrap;flex-shrink:0}
+.t포장{background:#FFE0EE;color:#C2608A;border:1px solid #FFB3D1}
+.t운반{background:#E0EFFF;color:#2D6BAD;border:1px solid #A8CFF0}
+.rtl{flex:1;display:flex;position:relative;align-items:center}
+.hbg{border-right:1px solid var(--border);flex-shrink:0}
+.hbg.night{background:rgba(26,58,95,.06)}.hbg.work{background:rgba(255,153,204,.06)}
+
+/* ── BAR ── */
+.bar{position:absolute;border-radius:4px;top:50%;transform:translateY(-50%);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;overflow:hidden;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.18);border:1px solid rgba(0,0,0,.08);cursor:grab;transition:height .12s,box-shadow .12s;user-select:none}
+.bar:hover{height:26px!important;box-shadow:0 3px 10px rgba(0,0,0,.25)}
+.bar:active{cursor:grabbing}
+.bar.bpink{background:linear-gradient(135deg,#FF99CC,#FF66AA);color:#7B1447;border-color:#FF66AA}
+.bar.bnavy{background:linear-gradient(135deg,#4A7AAF,#1A3A5F);color:#fff;border-color:#1A3A5F}
+.bar.borange{background:linear-gradient(135deg,#F39C12,#D35400);color:#fff}
+.bar.bsky{background:linear-gradient(135deg,#AED6F1,#5DADE2);color:#1A5C87}
+.bar.selected{outline:3px solid var(--red);outline-offset:1px;z-index:5}
+
+/* ── TIME LINE ── */
+.tline{position:absolute;top:0;bottom:0;width:2px;background:var(--red);z-index:8;pointer-events:none}
+.tline::before{content:attr(data-t);position:absolute;top:0;left:-18px;background:var(--red);color:#fff;font-size:9px;padding:1px 4px;border-radius:3px;white-space:nowrap}
+
+/* ── MAP PANEL ── */
+.map-panel{flex:0 0 42%;overflow:hidden;display:flex;flex-direction:column;background:#f0f4f8;transition:flex .3s}
+.map-panel.hidden{flex:0 0 0%;overflow:hidden}
+.map-panel.full{flex:1}
+.map-hdr{padding:10px 14px;background:var(--navy);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.map-hdr span{font-size:11px;opacity:.7;font-weight:400}
+.map-scroll{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+.map-info{background:#fff;border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:12px}
+.map-info.none{color:var(--muted);text-align:center;padding:20px}
+.map-svg-wrap{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;flex-shrink:0}
+.zone-area{cursor:pointer;transition:opacity .2s}
+.zone-area:hover{opacity:.85}
+.zone-hl{filter:drop-shadow(0 0 6px rgba(217,4,41,.8))}
+.worker-pin{cursor:pointer;transition:transform .2s}
+.worker-pin:hover{transform:scale(1.3) translateY(-2px)}
+
+/* ── ON-DUTY (라이브 근무중) ── */
+.bar.on-duty{box-shadow:0 0 0 2px #00C851,0 2px 8px rgba(0,200,81,.45)!important;border-color:#00C851!important}
+.wr.on-duty .rl .rname{color:#00952e;font-weight:700}
+.wr.on-duty .rn{background:#00C851!important}
+.duty-live-badge{display:inline-flex;align-items:center;gap:5px;background:#00C851;color:#fff;border-radius:12px;padding:2px 10px;font-size:11px;font-weight:700;animation:blink-dot 1.5s ease-in-out infinite}
+@keyframes blink-dot{0%,100%{opacity:1}50%{opacity:.6}}
+.duty-dot{width:7px;height:7px;border-radius:50%;background:#fff;flex-shrink:0}
+.duty-panel{background:#fff;border:1px solid #b8e8c8;border-left:4px solid #00C851;border-radius:8px;padding:12px 14px;font-size:12px;margin-bottom:0}
+.duty-zone-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--border)}
+.duty-zone-row:last-child{border-bottom:none}
+.duty-zone-cnt{background:#00C851;color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:700}
+.duty-zone-cnt.zero{background:var(--border);color:var(--muted)}
+.sc.green{border-left-color:#00C851}.sc.green b{color:#007a2f}
+
+/* ── MAP SVG ZOOM / PAN ── */
+#venueSVG{cursor:grab;touch-action:none;user-select:none}
+#venueSVG.panning{cursor:grabbing}
+#mapG{transform-origin:0 0;will-change:transform}
+#mapG.animated{transition:transform .38s cubic-bezier(.25,.8,.25,1)}
+.map-zoom-bar{display:flex;align-items:center;gap:6px;padding:6px 14px;background:rgba(26,58,95,.06);border-bottom:1px solid var(--border);flex-shrink:0}
+.mzb{width:26px;height:26px;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:background .12s;color:var(--navy);font-weight:700}
+.mzb:hover{background:var(--accent-soft,#e8edf5)}
+#mzLevel{font-size:11px;font-weight:600;color:var(--navy);min-width:38px;text-align:center}
+.mzb-reset{font-size:10px;padding:0 8px;width:auto;border-radius:6px}
+
+/* ── TOOLTIP ── */
+.ttp{position:fixed;background:var(--navy);color:#fff;padding:8px 12px;border-radius:8px;font-size:11px;pointer-events:none;z-index:9999;display:none;max-width:220px;line-height:1.7;box-shadow:0 4px 16px rgba(0,0,0,.3)}
+.ttp::after{content:'';position:absolute;top:100%;left:12px;border:5px solid transparent;border-top-color:var(--navy)}
+
+/* ── FOOTER ── */
+.ftr{padding:5px 20px;font-size:10px;color:var(--muted);border-top:1px solid var(--border);background:#fff;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+
+/* ── LEGEND ── */
+.legend{display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:10px}
+.li{display:flex;align-items:center;gap:4px}
+.ld{width:12px;height:12px;border-radius:2px}
+
+/* no results */
+.no-results{text-align:center;padding:40px;color:var(--muted);font-size:13px}
+
+/* ── INLINE NAME EDIT ── */
+.rname{cursor:default}
+.rname.editable{cursor:text}
+.name-edit-btn{
+  opacity:0;font-size:10px;cursor:pointer;flex-shrink:0;
+  width:18px;height:18px;display:flex;align-items:center;justify-content:center;
+  border-radius:3px;transition:opacity .15s,background .12s;color:var(--muted);
+  margin-left:-2px;
+}
+.rl:hover .name-edit-btn{opacity:.7}
+.name-edit-btn:hover{opacity:1!important;background:#dde4f0;color:var(--navy)}
+.rname-input{
+  font-size:12px;font-weight:600;font-family:inherit;
+  border:1.5px solid var(--navy);border-radius:4px;
+  padding:1px 5px;background:#fff;color:var(--navy);
+  outline:none;flex:1;min-width:0;
+  box-shadow:0 0 0 3px rgba(26,58,95,.12);
+}
+.rname-input:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(217,4,41,.12)}
+/* 이름 편집 중 행 강조 */
+.wr.editing{background:#FFF8E1!important;outline:2px solid #F0B429;outline-offset:-2px}
+
+/* ── ROW DRAG (27일 조 재편성) ── */
+.drag-handle{
+  cursor:grab;padding:0 5px 0 2px;color:#bbb;font-size:13px;
+  flex-shrink:0;user-select:none;line-height:1;letter-spacing:-1px;
+  transition:color .12s;
+}
+.drag-handle:hover{color:var(--navy)}
+.drag-handle:active{cursor:grabbing}
+.wr.row-dragging{opacity:.35;outline:2px dashed var(--muted);outline-offset:-2px}
+.wr.row-drag-over{background:#E4F0FF!important;outline:2px solid var(--navy2);outline-offset:-2px}
+.grp-hdr.row-drop-target{background:linear-gradient(to right,#c8dffc,#e4f0ff)!important;outline:2px dashed var(--navy);outline-offset:-2px}
+.row-drag-ghost{
+  position:fixed;pointer-events:none;z-index:9999;
+  background:var(--navy);color:#fff;
+  padding:5px 14px;border-radius:20px;font-size:11px;font-weight:700;
+  box-shadow:0 4px 18px rgba(0,0,0,.35);opacity:.92;white-space:nowrap;
+  transform:translate(-50%,-130%);
+}
+
+/* ── GROUP MANAGEMENT (27일) ── */
+.grp-del-btn{
+  margin-left:4px;cursor:pointer;font-size:12px;opacity:0;
+  padding:1px 6px;border-radius:4px;flex-shrink:0;
+  transition:opacity .15s,background .12s;line-height:1.6;
+}
+.grp-hdr:hover .grp-del-btn{opacity:.55}
+.grp-del-btn:hover{opacity:1!important;background:#FDECEA;color:#C0392B}
+/* 클릭 가능 구역 배지 → 위치 텍스트 배지 */
+.loc-badge{
+  font-size:10px;margin-left:4px;padding:2px 8px;border-radius:10px;
+  cursor:text;user-select:none;font-weight:600;
+  border:1px dashed #aaa;color:var(--muted);background:#f4f6f8;
+  transition:border-color .12s,background .12s;white-space:nowrap;
+  flex-shrink:1;min-width:0;overflow:hidden;text-overflow:ellipsis;
+}
+.loc-badge:hover{border-color:var(--navy);background:#e8edf5;color:var(--navy)}
+.loc-badge.has-val{border-style:solid;color:var(--navy);background:#EEF3FA}
+/* 위치 인라인 입력 — flex:1로 남은 공간 자동 채움 */
+.loc-input{
+  font-size:10px;font-family:inherit;font-weight:600;
+  border:1.5px solid var(--navy);border-radius:8px;
+  padding:2px 8px;background:#fff;color:var(--navy);
+  outline:none;flex:1;min-width:60px;
+  box-shadow:0 0 0 3px rgba(26,58,95,.10);
+}
+#addGroupBtn{
+  display:none;align-items:center;gap:5px;
+  padding:5px 12px;border:1.5px solid var(--navy);border-radius:8px;
+  background:#fff;color:var(--navy);font-size:11px;font-weight:700;
+  cursor:pointer;transition:background .12s,color .12s;white-space:nowrap;
+}
+#addGroupBtn:hover{background:var(--navy);color:#fff}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div>🎪</div>
+  <div><h1>2026 흠뻑쇼 의정부 – 근무투입현황 시스템</h1><p>인력배치계획 0619ver &nbsp;|&nbsp; Gantt + 도면 연동 인터랙티브 뷰</p></div>
+  <div class="hdr-badge">6/25~27 · 진행요원 160명(연)</div>
+</div>
+
+<!-- TABS -->
+<div class="tabs" id="tabs">
+  <div class="tab on" onclick="switchDay(0)">📦 6월 25일(목) 사전작업 1일차<span class="tab-n">60명</span></div>
+  <div class="tab" onclick="switchDay(1)">📦 6월 26일(금) 사전작업 2일차<span class="tab-n">40명</span></div>
+  <div class="tab map-day" onclick="switchDay(2)">🎤 6월 27일(토) 본공연<span class="tab-n">60명</span><span class="tab-map-badge">🗺️ 도면연동</span></div>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="search-box">
+    <span>🔍</span>
+    <input type="text" id="searchInput" placeholder="이름·임무·조 검색..." oninput="onSearch()" onkeydown="onSearchKey(event)">
+    <span class="clear-btn" onclick="clearSearch()">✕</span>
+  </div>
+  <div class="tb-sep"></div>
+  <span class="filter-lbl">임무</span>
+  <div class="flt-btn on" id="f-all" onclick="setFilter('all')">전체</div>
+  <div class="flt-btn pink" id="f-포장" onclick="setFilter('포장')">📦 물품포장</div>
+  <div class="flt-btn orange" id="f-운반" onclick="setFilter('운반')">🚚 물품운반</div>
+  <div class="tb-sep"></div>
+  <div class="zoom-grp">
+    <span class="filter-lbl">줌</span>
+    <div class="z-btn" onclick="zoom(-1)">−</div>
+    <div class="z-val" id="zval">100%</div>
+    <div class="z-btn" onclick="zoom(1)">＋</div>
+  </div>
+  <div class="tb-sep" id="viewToggleSep" style="display:none"></div>
+  <span class="filter-lbl" id="viewToggleLbl" style="display:none">뷰</span>
+  <div id="viewToggleWrap" style="display:none">
+    <div class="view-toggle">
+      <div class="vt-btn on" id="vt-both" onclick="setView('both')">Gantt+도면</div>
+      <div class="vt-btn" id="vt-gantt" onclick="setView('gantt')">Gantt만</div>
+      <div class="vt-btn" id="vt-map" onclick="setView('map')">도면만</div>
+    </div>
+  </div>
+  <button id="addGroupBtn" onclick="addGroup()">＋ 조 추가</button>
+</div>
+
+<!-- STATS -->
+<div class="stats" id="statsBar">
+  <div class="sc"><span>👥</span><div><label>총 투입</label><b id="st-total">60명</b></div></div>
+  <div class="sc o" id="sc-pack"><span>📦</span><div><label>물품포장</label><b id="st-pack">30명</b></div></div>
+  <div class="sc p" id="sc-carry"><span>🚚</span><div><label>물품운반</label><b id="st-carry">30명</b></div></div>
+  <div class="sc" id="sc-groups"><span>🏷️</span><div><label>조 편성</label><b id="st-groups">15조</b></div></div>
+  <div class="sc r" id="sc-time"><span>⏰</span><div><label>근무시간</label><b>13:00~22:00</b></div></div>
+  <div class="sc green"><span>🟢</span><div><label>현재 근무중</label><b id="st-onduty">-명</b></div></div>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:10px" class="legend">
+    <div class="li"><div class="ld" style="background:linear-gradient(135deg,#FF99CC,#FF66AA)"></div>진행요원</div>
+    <div class="li"><div class="ld" style="background:rgba(26,58,95,.08);border:1px solid #ccc"></div>야간(22~06시)</div>
+    <div class="li"><div class="ld" style="background:rgba(255,153,204,.15);border:1px solid #FF99CC"></div>근무 시간대</div>
+    <div class="li"><div style="width:2px;height:12px;background:var(--red);border-radius:1px"></div>현재시각</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main" id="mainContent">
+
+  <!-- GANTT PANEL -->
+  <div class="gantt-panel half" id="ganttPanel">
+    <div class="gantt-scroll" id="ganttScroll">
+      <div class="gantt-inner" id="ganttInner"></div>
+    </div>
+  </div>
+
+  <!-- MAP PANEL -->
+  <div class="map-panel" id="mapPanel">
+    <div class="map-hdr">🗺️ 공연장 도면 <span>근무자 검색 시 위치 표시 · 본공연(27일) 전용</span><button class="map-toggle-btn" id="mapToggleBtn" onclick="toggleMapPanel()">◀ 도면 숨기기</button></div>
+    <!-- 줌 컨트롤 바 -->
+    <div class="map-zoom-bar">
+      <div class="mzb" onclick="mapZoomStep(-1)" title="축소">−</div>
+      <span id="mzLevel">100%</span>
+      <div class="mzb" onclick="mapZoomStep(1)" title="확대">＋</div>
+      <div class="mzb mzb-reset" onclick="mapZoomReset()" title="초기화">⟳ 초기화</div>
+      <span style="font-size:10px;color:var(--muted);margin-left:4px">휠 스크롤로 줌 · 드래그로 이동</span>
+    </div>
+    <div class="map-scroll" id="mapScroll">
+      <!-- 라이브 근무 현황 패널 -->
+      <div class="duty-panel" id="dutyPanel">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <span class="duty-live-badge"><span class="duty-dot"></span>LIVE 근무 현황</span>
+          <span style="font-size:11px;color:var(--muted)" id="dutyTime">--:-- 기준</span>
+          <span style="margin-left:auto;font-size:12px;font-weight:700;color:#007a2f" id="dutyTotal">- 명 근무중</span>
+        </div>
+        <div id="dutyZoneList"></div>
+      </div>
+      <div class="map-info none" id="mapInfo">
+        근무자를 검색하거나 Gantt에서 이름을 클릭하면<br>도면상 위치가 표시됩니다.
+      </div>
+      <div class="map-svg-wrap">
+        <svg id="venueSVG" viewBox="0 0 600 560" width="100%" style="display:block">
+          <g id="mapG">
+          <!-- 배경 -->
+          <rect width="600" height="560" fill="#EFF4F8" rx="12"/>
+          <!-- 제목 -->
+          <text x="300" y="21" text-anchor="middle" font-size="13" font-weight="700" fill="#1A3A5F">2026 흠뻑쇼 의정부 공연장</text>
+          <!-- 외곽 펜스 -->
+          <rect x="15" y="28" width="570" height="515" rx="10" fill="none" stroke="#1A3A5F" stroke-width="2" stroke-dasharray="8,4"/>
+
+          <!-- ▣ STAGE -->
+          <rect x="145" y="36" width="310" height="52" rx="10" fill="#CDD5DC" stroke="#A0ADB8" stroke-width="2"/>
+          <text x="300" y="67" text-anchor="middle" font-size="14" font-weight="700" fill="#1A3A5F" letter-spacing="3">STAGE</text>
+
+          <!-- ▣ 가 구역 (zone-A, 스탠딩 전방 좌) -->
+          <rect id="zone-A" class="zone-area" x="55" y="96" width="198" height="76" rx="10" fill="#AED6F1" stroke="#5DADE2" stroke-width="2.5"/>
+          <text x="154" y="134" text-anchor="middle" font-size="28" font-weight="900" fill="#1A5C87">가</text>
+          <text x="154" y="152" text-anchor="middle" font-size="10" fill="#2D6BAD">스탠딩</text>
+          <text x="154" y="165" text-anchor="middle" font-size="9" fill="#5DADE2">조 1·2·3</text>
+
+          <!-- 중앙 통로 (가↔나) -->
+          <rect x="255" y="96" width="90" height="76" rx="6" fill="#D0E8F5" opacity=".55"/>
+          <text x="300" y="136" text-anchor="middle" font-size="9" fill="#5D6D7E">중앙 통로</text>
+
+          <!-- ▣ 나 구역 (zone-B, 스탠딩 전방 우) -->
+          <rect id="zone-B" class="zone-area" x="347" y="96" width="198" height="76" rx="10" fill="#AED6F1" stroke="#5DADE2" stroke-width="2.5"/>
+          <text x="446" y="134" text-anchor="middle" font-size="28" font-weight="900" fill="#1A5C87">나</text>
+          <text x="446" y="152" text-anchor="middle" font-size="10" fill="#2D6BAD">스탠딩</text>
+          <text x="446" y="165" text-anchor="middle" font-size="9" fill="#5DADE2">조 4·5·6</text>
+
+          <!-- ▣ 다 구역 (zone-C, 스탠딩 후방 좌) -->
+          <rect id="zone-C" class="zone-area" x="55" y="180" width="198" height="76" rx="10" fill="#A9DFBF" stroke="#27AE60" stroke-width="2.5"/>
+          <text x="154" y="218" text-anchor="middle" font-size="28" font-weight="900" fill="#1E5631">다</text>
+          <text x="154" y="236" text-anchor="middle" font-size="10" fill="#196F3D">스탠딩</text>
+          <text x="154" y="249" text-anchor="middle" font-size="9" fill="#27AE60">조 7·8·9</text>
+
+          <!-- 중앙 통로 (다↔라) -->
+          <rect x="255" y="180" width="90" height="76" rx="6" fill="#C5D8CC" opacity=".55"/>
+          <text x="300" y="220" text-anchor="middle" font-size="9" fill="#5D6D7E">중앙 통로</text>
+
+          <!-- ▣ 라 구역 (zone-D, 스탠딩 후방 우) -->
+          <rect id="zone-D" class="zone-area" x="347" y="180" width="198" height="76" rx="10" fill="#A9DFBF" stroke="#27AE60" stroke-width="2.5"/>
+          <text x="446" y="218" text-anchor="middle" font-size="28" font-weight="900" fill="#1E5631">라</text>
+          <text x="446" y="236" text-anchor="middle" font-size="10" fill="#196F3D">스탠딩</text>
+          <text x="446" y="249" text-anchor="middle" font-size="9" fill="#27AE60">조 10·11·12</text>
+
+          <!-- ▣ CONSOLE -->
+          <rect x="213" y="264" width="174" height="28" rx="8" fill="#CDD5DC" stroke="#A0ADB8" stroke-width="1.5"/>
+          <text x="300" y="282" text-anchor="middle" font-size="11" font-weight="700" fill="#2C3E50" letter-spacing="2">CONSOLE</text>
+
+          <!-- 구분선 + 지정석 구역 레이블 -->
+          <line x1="18" y1="298" x2="582" y2="298" stroke="#B0BEC5" stroke-width="1" stroke-dasharray="4,3"/>
+          <text x="300" y="310" text-anchor="middle" font-size="10" font-weight="700" fill="#7F8C8D">━━  지정석 구역  ━━</text>
+
+          <!-- ══ 1F 지정석 ══ -->
+          <text x="23" y="330" font-size="9" font-weight="700" fill="#7B241C">1F</text>
+          <rect x="35" y="316" width="26" height="40" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1.2"/><text x="48" y="340" text-anchor="middle" font-size="10" font-weight="700" fill="#7D6608">Q</text>
+          <rect x="63" y="316" width="26" height="40" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1.2"/><text x="76" y="340" text-anchor="middle" font-size="10" font-weight="700" fill="#7D6608">P</text>
+          <rect x="91" y="316" width="26" height="40" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1.2"/><text x="104" y="340" text-anchor="middle" font-size="10" font-weight="700" fill="#7D6608">O</text>
+          <rect x="119" y="316" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="132" y="335" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">N</text><text x="132" y="347" text-anchor="middle" font-size="7" fill="#C0392B">지정석</text>
+          <rect x="147" y="316" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="160" y="335" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">M</text><text x="160" y="347" text-anchor="middle" font-size="7" fill="#C0392B">지정석</text>
+          <rect x="175" y="316" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="188" y="335" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">L</text><text x="188" y="347" text-anchor="middle" font-size="7" fill="#C0392B">지정석</text>
+          <rect x="203" y="316" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="216" y="335" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">K</text><text x="216" y="347" text-anchor="middle" font-size="7" fill="#C0392B">지정석</text>
+          <rect x="231" y="316" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="244" y="335" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">J</text><text x="244" y="347" text-anchor="middle" font-size="7" fill="#C0392B">지정석</text>
+          <rect x="259" y="316" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="272" y="335" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">I</text><text x="272" y="347" text-anchor="middle" font-size="7" fill="#C0392B">지정석</text>
+          <rect x="287" y="316" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="300" y="335" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">H</text><text x="300" y="347" text-anchor="middle" font-size="7" fill="#C0392B">지정석</text>
+          <rect x="315" y="316" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="328" y="335" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">G</text><text x="328" y="347" text-anchor="middle" font-size="7" fill="#C0392B">지정석</text>
+          <rect x="343" y="316" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="356" y="335" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">F</text><text x="356" y="347" text-anchor="middle" font-size="7" fill="#C0392B">지정석</text>
+          <rect x="371" y="316" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="384" y="335" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">E</text><text x="384" y="347" text-anchor="middle" font-size="7" fill="#C0392B">지정석</text>
+          <rect x="399" y="316" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="412" y="335" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">D</text><text x="412" y="347" text-anchor="middle" font-size="7" fill="#C0392B">지정석</text>
+          <rect x="427" y="316" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="440" y="335" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">C</text><text x="440" y="347" text-anchor="middle" font-size="7" fill="#C0392B">지정석</text>
+          <rect x="455" y="316" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="468" y="335" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">B</text><text x="468" y="347" text-anchor="middle" font-size="7" fill="#C0392B">지정석</text>
+          <rect x="483" y="316" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="496" y="335" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">A</text><text x="496" y="347" text-anchor="middle" font-size="7" fill="#C0392B">지정석</text>
+          <rect x="511" y="316" width="26" height="40" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1.2"/><text x="524" y="340" text-anchor="middle" font-size="10" font-weight="700" fill="#7D6608">U</text>
+          <rect x="539" y="316" width="26" height="40" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1.2"/><text x="552" y="340" text-anchor="middle" font-size="10" font-weight="700" fill="#7D6608">T</text>
+
+          <!-- ══ 2F 지정석 ══ -->
+          <text x="50" y="373" font-size="9" font-weight="700" fill="#7B241C">2F</text>
+          <rect x="67" y="362" width="24" height="36" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1.2"/><text x="79" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">Q</text>
+          <rect x="93" y="362" width="24" height="36" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1.2"/><text x="105" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">P</text>
+          <rect x="119" y="362" width="24" height="36" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1.2"/><text x="131" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">O</text>
+          <rect x="145" y="362" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="157" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">N</text>
+          <rect x="171" y="362" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="183" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">M</text>
+          <rect x="197" y="362" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="209" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">L</text>
+          <rect x="223" y="362" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="235" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">K</text>
+          <rect x="249" y="362" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="261" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">J</text>
+          <rect x="275" y="362" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="287" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">I</text>
+          <rect x="301" y="362" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="313" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">H</text>
+          <rect x="327" y="362" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="339" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">G</text>
+          <rect x="353" y="362" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="365" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">F</text>
+          <rect x="379" y="362" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="391" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">E</text>
+          <rect x="405" y="362" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="417" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">D</text>
+          <rect x="431" y="362" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="443" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">C</text>
+          <rect x="457" y="362" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="469" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">B</text>
+          <rect x="483" y="362" width="24" height="36" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1.2"/><text x="495" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">A</text>
+          <rect x="509" y="362" width="24" height="36" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1.2"/><text x="521" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">T</text>
+
+          <!-- ══ 3F 지정석 (전체 노란) ══ -->
+          <text x="122" y="418" font-size="9" font-weight="700" fill="#7B241C">3F</text>
+          <rect x="145" y="406" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="156" y="425" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">M</text>
+          <rect x="169" y="406" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="180" y="425" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">L</text>
+          <rect x="193" y="406" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="204" y="425" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">K</text>
+          <rect x="217" y="406" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="228" y="425" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">J</text>
+          <rect x="241" y="406" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="252" y="425" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">I</text>
+          <rect x="265" y="406" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="276" y="425" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">H</text>
+          <rect x="289" y="406" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="300" y="425" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">G</text>
+          <rect x="313" y="406" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="324" y="425" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">F</text>
+          <rect x="337" y="406" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="348" y="425" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">E</text>
+          <rect x="361" y="406" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="372" y="425" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">D</text>
+          <rect x="385" y="406" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="396" y="425" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">C</text>
+          <rect x="409" y="406" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="420" y="425" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">B</text>
+          <rect x="433" y="406" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="444" y="425" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">A</text>
+
+          <!-- zone-E 클릭 오버레이 (지정석 전체, 반투명) -->
+          <rect id="zone-E" class="zone-area" x="18" y="313" width="564" height="128" rx="8" fill="rgba(250,219,216,0.08)" stroke="#E74C3C" stroke-width="1.2" stroke-dasharray="5,3"/>
+          <text x="300" y="453" text-anchor="middle" font-size="9" fill="#C0392B" opacity=".7">조 13·14·15</text>
+
+          <!-- 범례 -->
+          <rect x="30" y="466" width="12" height="12" rx="2" fill="#AED6F1" stroke="#5DADE2" stroke-width="1"/>
+          <text x="47" y="476" font-size="9" fill="#555">가·나 스탠딩 (조1~6)</text>
+          <rect x="185" y="466" width="12" height="12" rx="2" fill="#A9DFBF" stroke="#27AE60" stroke-width="1"/>
+          <text x="202" y="476" font-size="9" fill="#555">다·라 스탠딩 (조7~12)</text>
+          <rect x="350" y="466" width="12" height="12" rx="2" fill="#FADBD8" stroke="#E74C3C" stroke-width="1"/>
+          <text x="367" y="476" font-size="9" fill="#555">지정석 A-N (조13~15)</text>
+          <rect x="510" y="466" width="12" height="12" rx="2" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/>
+          <text x="527" y="476" font-size="9" fill="#555">외곽 지정석</text>
+
+          <!-- 핀 레이어 -->
+          <g id="pinLayer"></g>
+          </g><!-- /mapG -->
+        </svg>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TOOLTIP -->
+<div class="ttp" id="ttp"></div>
+
+<!-- FOOTER -->
+<div class="ftr">
+  <span>📄 흠뻑쇼 의정부_인력배치계획 0619ver &nbsp;|&nbsp; 연 3일 / 총 160명</span>
+  <span id="clk"></span>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════
+const ZONE_MAP={
+  1:'A',2:'A',3:'A',
+  4:'B',5:'B',6:'B',
+  7:'C',8:'C',9:'C',
+  10:'D',11:'D',12:'D',
+  13:'E',14:'E',15:'E'
+};
+const ZONE_INFO={
+  A:{id:'zone-A',name:'가 구역 (스탠딩)',color:'#5DADE2',cx:154,cy:134},
+  B:{id:'zone-B',name:'나 구역 (스탠딩)',color:'#5DADE2',cx:446,cy:134},
+  C:{id:'zone-C',name:'다 구역 (스탠딩)',color:'#27AE60',cx:154,cy:218},
+  D:{id:'zone-D',name:'라 구역 (스탠딩)',color:'#27AE60',cx:446,cy:218},
+  E:{id:'zone-E',name:'지정석',color:'#E74C3C',cx:300,cy:377}
+};
+// 구역 내 서브 좌표 (핀 분산 배치)
+const ZONE_PINS={
+  A:[[80,118],[110,118],[140,118],[170,118],[80,143],[110,143],[140,143],[170,143],[80,165],[110,165],[140,165],[170,165]],
+  B:[[372,118],[402,118],[432,118],[462,118],[372,143],[402,143],[432,143],[462,143],[372,165],[402,165],[432,165],[462,165]],
+  C:[[80,200],[110,200],[140,200],[170,200],[80,225],[110,225],[140,225],[170,225],[80,248],[110,248],[140,248],[170,248]],
+  D:[[372,200],[402,200],[432,200],[462,200],[372,225],[402,225],[432,225],[462,225],[372,248],[402,248],[432,248],[462,248]],
+  E:[[132,336],[160,336],[188,336],[216,336],[244,336],[272,336],[300,336],[328,336],[356,336],[384,336],[412,336],[440,336]]
+};
+
+function makeWorkers(count){
+  const tasks=['물품포장','물품포장','물품운반','물품운반'];
+  const ws=[];let g=1;
+  for(let i=0;i<count;i++){
+    if(i>0&&i%4===0)g++;
+    const n=String(i+1).padStart(3,'0');
+    const zone=ZONE_MAP[g]||'A';
+    const loc=ZONE_INFO[zone]?.name||zone;
+    ws.push({num:i+1,name:`진행요원${n}`,task:tasks[i%4],group:g,zone,loc,startH:13,endH:22,color:'pink'});
+  }
+  return ws;
+}
+const DAYS=[
+  {label:'6월 25일',date:'2026-06-25',type:'사전작업 1일차',workers:makeWorkers(60)},
+  {label:'6월 26일',date:'2026-06-26',type:'사전작업 2일차',workers:makeWorkers(40)},
+  {label:'6월 27일',date:'2026-06-27',type:'본공연',workers:makeWorkers(60)}
+];
+
+// ═══════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════
+let curDay=0,zoomLv=100,curFilter='all',curSearch='',curView='both';
+let selWorker=null;
+let collapsedGroups={};
+let dragState=null;
+const NIGHT_H=[0,1,2,3,4,5,22,23];
+const WORK_H=[13,14,15,16,17,18,19,20,21];
+
+// ═══════════════════════════════════════════════════
+// GANTT RENDER
+// ═══════════════════════════════════════════════════
+function hw(){return Math.round(zoomLv*0.52)} // hour width px
+
+function renderGantt(){
+  // 27일 탭은 위치 텍스트까지 표시해야 하므로 레이블 폭 확장
+  document.documentElement.style.setProperty('--lw', curDay === 2 ? '340px' : '260px');
+
+  const d=DAYS[curDay];
+  const workers=d.workers;
+  const HW=hw();
+  const LW=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--lw'));
+
+  let html='';
+  // Header
+  html+=`<div class="gh"><div class="gh-lbl" style="min-width:${LW}px;width:${LW}px">`;
+  html+=`<span style="opacity:.5">조</span>이름 / 임무</div><div class="gh-tl">`;
+  for(let h=0;h<24;h++){
+    const cl=NIGHT_H.includes(h)?'night':WORK_H.includes(h)?'work':'';
+    html+=`<div class="hc ${cl}" style="width:${HW}px;min-width:${HW}px">${String(h).padStart(2,'0')}</div>`;
+  }
+  html+=`</div></div>`;
+
+  // Group rows
+  let curG=-1;
+  const groups={};
+  workers.forEach(w=>{if(!groups[w.group])groups[w.group]=[];groups[w.group].push(w);});
+
+  const isCollapsed=g=>!!collapsedGroups[`${curDay}-${g}`];
+
+  for(const [gk,gWorkers] of Object.entries(groups)){
+    const g=parseInt(gk);
+    const packing=gWorkers.filter(w=>w.task==='물품포장').length;
+    const carrying=gWorkers.filter(w=>w.task==='물품운반').length;
+    const collapsed=isCollapsed(g);
+    const zone=gWorkers[0]?.zone||'A';
+    const zInfo=ZONE_INFO[zone];
+    html+=`<div class="grp-hdr${collapsed?' collapsed':''}" onclick="toggleGroup(${g})" data-g="${g}">`;
+    html+=`<div class="grp-lbl" style="min-width:${LW}px;width:${LW}px">`;
+    html+=`<span class="grp-badge">조 ${g}</span>`;
+    html+=`<span style="font-size:10px;color:var(--muted);font-weight:400">포장${packing}·운반${carrying}</span>`;
+    // 27일(본공연) 탭에서만 구역 배지 표시
+    if(curDay===2){
+      const loc=gWorkers[0]?.loc||'';
+      const hasVal=loc.trim()!=='';
+      html+=`<span class="loc-badge${hasVal?' has-val':''}" onclick="event.stopPropagation()" ondblclick="startLocEdit(this,${g},event)" title="더블클릭하여 위치 직접 입력">${hasVal?loc:'위치 입력...'}</span>`;
+      html+=`<span class="grp-del-btn" onclick="deleteGroup(${g},event)" title="조 ${g} 삭제">🗑</span>`;
+    }
+    html+=`<span class="grp-arrow">▼</span></div>`;
+    html+=`<div class="grp-tl">`;
+    for(let h=0;h<24;h++) html+=`<div class="ghb" style="width:${HW}px;min-width:${HW}px"></div>`;
+    html+=`</div></div>`;
+
+    if(!collapsed){
+      gWorkers.forEach((w,idx)=>{
+        const even=idx%2===0;
+        const match=matchesFilter(w);
+        const hl=selWorker&&selWorker.name===w.name;
+        const dim=!match&&(curSearch!==''||curFilter!=='all');
+        html+=`<div class="wr${even?' wr-even':''}${hl?' hl':''}${dim?' dim':''}" data-name="${w.name}" data-g="${w.group}" style="height:${rowH()}px;background:${even?'var(--bg2)':'var(--bg)'}">`;
+        html+=`<div class="rl" style="min-width:${LW}px;width:${LW}px" onclick="selectWorker('${w.name}')">`;
+        if(curDay===2) html+=`<span class="drag-handle" onmousedown="startRowDrag(event,'${w.name}')" title="드래그하여 조 이동">⠿</span>`;
+        html+=`<span class="rn">${w.num}</span>`;
+        html+=`<span class="rname" ondblclick="startNameEdit(this,'${w.name}',event)">${w.name}</span>`;
+        html+=`<span class="name-edit-btn" onclick="startNameEdit(this.previousElementSibling,'${w.name}',event)" title="이름 편집 (더블클릭도 가능)">✏</span>`;
+        html+=`<span class="rtask t${w.task.replace('물품','')}">${w.task}</span>`;
+        html+=`</div>`;
+        html+=`<div class="rtl" style="position:relative">`;
+        for(let h=0;h<24;h++){
+          const cl=NIGHT_H.includes(h)?'night':WORK_H.includes(h)?'work':'';
+          html+=`<div class="hbg ${cl}" style="width:${HW}px;min-width:${HW}px;height:100%"></div>`;
+        }
+        // bar
+        const bLeft=w.startH*HW;
+        const bW=(w.endH-w.startH)*HW;
+        const bH=rowH()-10;
+        const sel=selWorker&&selWorker.name===w.name;
+        html+=`<div class="bar bpink${sel?' selected':''}" `;
+        html+=`style="left:${bLeft}px;width:${bW}px;height:${bH}px" `;
+        html+=`data-name="${w.name}" data-task="${w.task}" data-g="${w.group}" data-s="${w.startH}" data-e="${w.endH}" `;
+        html+=`onmouseenter="showTip(event,this)" onmouseleave="hideTip()" `;
+        html+=`onmousedown="startDrag(event,this)">`;
+        html+=bW>80?`${w.startH}:00~${w.endH}:00`:'';
+        html+=`</div>`;
+        html+=`</div></div>`;
+      });
+    }
+  }
+
+  document.getElementById('ganttInner').innerHTML=html;
+  updateTimeLine();
+  updateStats();
+}
+
+function rowH(){return Math.max(28,Math.round(zoomLv*0.34))}
+
+function matchesFilter(w){
+  if(curFilter!=='all'&&!w.task.includes(curFilter)) return false;
+  if(curSearch==='') return true;
+  const q=curSearch.toLowerCase();
+  return w.name.toLowerCase().includes(q)||w.task.includes(curSearch)||String(w.group).includes(curSearch)||`조${w.group}`.includes(curSearch);
+}
+
+// ═══════════════════════════════════════════════════
+// STATS
+// ═══════════════════════════════════════════════════
+function updateStats(){
+  const ws=DAYS[curDay].workers.filter(matchesFilter);
+  document.getElementById('st-total').textContent=ws.length+'명';
+  document.getElementById('st-pack').textContent=ws.filter(w=>w.task==='물품포장').length+'명';
+  document.getElementById('st-carry').textContent=ws.filter(w=>w.task==='물품운반').length+'명';
+  const gs=new Set(ws.map(w=>w.group)).size;
+  document.getElementById('st-groups').textContent=gs+'조';
+}
+
+// ═══════════════════════════════════════════════════
+// SEARCH & FILTER
+// ═══════════════════════════════════════════════════
+function onSearch(){
+  curSearch=document.getElementById('searchInput').value.trim();
+  renderGantt();
+  // 검색 결과가 1명이면 자동 선택
+  const matched=DAYS[curDay].workers.filter(matchesFilter);
+  if(matched.length===1) selectWorker(matched[0].name,false);
+  else if(curSearch==='') clearSelection();
+}
+function onSearchKey(e){if(e.key==='Escape')clearSearch();}
+function clearSearch(){
+  document.getElementById('searchInput').value='';
+  curSearch='';
+  clearSelection();
+  renderGantt();
+}
+function setFilter(f){
+  curFilter=f;
+  ['all','포장','운반'].forEach(x=>{
+    const el=document.getElementById(`f-${x}`);
+    if(el) el.classList.toggle('on',x===f);
+  });
+  renderGantt();
+}
+
+// ═══════════════════════════════════════════════════
+// ZOOM
+// ═══════════════════════════════════════════════════
+function zoom(dir){
+  zoomLv=Math.min(200,Math.max(50,zoomLv+dir*25));
+  document.getElementById('zval').textContent=zoomLv+'%';
+  renderGantt();
+}
+
+// ═══════════════════════════════════════════════════
+// GROUP COLLAPSE
+// ═══════════════════════════════════════════════════
+function toggleGroup(g){
+  const key=`${curDay}-${g}`;
+  collapsedGroups[key]=!collapsedGroups[key];
+  renderGantt();
+}
+
+// ═══════════════════════════════════════════════════
+// WORKER SELECT + MAP PIN
+// ═══════════════════════════════════════════════════
+function selectWorker(name, scroll=true){
+  const ws=DAYS[curDay].workers;
+  const w=ws.find(x=>x.name===name);
+  if(!w) return;
+  selWorker=w;
+  renderGantt();
+  if(scroll) scrollToWorker(w);
+  showMapPin(w);
+  showMapInfo(w);
+}
+function clearSelection(){
+  selWorker=null;
+  clearMapPins();
+  document.getElementById('mapInfo').innerHTML='근무자를 검색하거나 Gantt에서 이름을 클릭하면<br>도면상 위치가 표시됩니다.';
+  document.getElementById('mapInfo').className='map-info none';
+}
+function scrollToWorker(w){
+  // 해당 행으로 스크롤
+  setTimeout(()=>{
+    const rows=document.querySelectorAll('.wr.hl');
+    if(rows[0]) rows[0].scrollIntoView({behavior:'smooth',block:'center'});
+  },50);
+}
+
+function showMapPin(w){
+  clearMapPins();
+  const zone=w.zone;
+  const zInfo=ZONE_INFO[zone];
+  if(!zInfo) return;
+  // 구역 테두리 강조
+  const zoneEl=document.getElementById(zInfo.id);
+  if(zoneEl) zoneEl.classList.add('zone-hl');
+  // 핀 위치 계산
+  const groupWorkers=DAYS[curDay].workers.filter(x=>x.group===w.group);
+  const idx=groupWorkers.findIndex(x=>x.name===w.name);
+  const pins=ZONE_PINS[zone]||[];
+  const groupInZone=DAYS[curDay].workers.filter(x=>x.zone===zone&&x.group<w.group).length;
+  const pinIdx=groupInZone+idx;
+  let px,py;
+  if(pins[pinIdx]){px=pins[pinIdx][0];py=pins[pinIdx][1];}
+  else{px=zInfo.cx+(Math.random()-0.5)*40;py=zInfo.cy+(Math.random()-0.5)*20;}
+
+  const pinLayer=document.getElementById('pinLayer');
+  const nameShort=w.name.replace('진행요원','').replace(/^0+/,'')+'번';
+  const labelW=Math.max(44, nameShort.length*7+10);
+  pinLayer.innerHTML=`
+    <line x1="${px}" y1="${py-12}" x2="${px}" y2="${py-34}" stroke="#1A3A5F" stroke-width="1.5"/>
+    <circle cx="${px}" cy="${py}" r="9" fill="${zInfo.color}" stroke="#fff" stroke-width="2.5"/>
+    <text x="${px}" y="${py+4}" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">📍</text>
+    <rect x="${px-labelW/2}" y="${py-50}" width="${labelW}" height="18" rx="4" fill="#1A3A5F" opacity=".92"/>
+    <text x="${px}" y="${py-38}" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">${w.name}</text>
+  `;
+  // ★ 해당 구역으로 줌 애니메이션
+  zoomToZone(zone);
+}
+
+function clearMapPins(){
+  document.getElementById('pinLayer').innerHTML='';
+  document.querySelectorAll('.zone-hl').forEach(el=>el.classList.remove('zone-hl'));
+  mapZoomReset(true); // 핀 해제 시 줌 초기화
+}
+
+function showMapInfo(w){
+  const zInfo=ZONE_INFO[w.zone]||{name:w.zone};
+  document.getElementById('mapInfo').className='map-info';
+  document.getElementById('mapInfo').innerHTML=`
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+      <div style="width:10px;height:10px;border-radius:50%;background:${zInfo.color||'#888'}"></div>
+      <b style="font-size:13px">${w.name}</b>
+      <span style="font-size:11px;padding:2px 8px;border-radius:10px;background:#F0F4FF;color:var(--navy)">조 ${w.group}</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px">
+      <div><span style="color:var(--muted)">임무</span><br><b>${w.task}</b></div>
+      <div><span style="color:var(--muted)">근무시간</span><br><b>${w.startH}:00 ~ ${w.endH}:00</b></div>
+      <div><span style="color:var(--muted)">배치 구역</span><br><b style="color:${zInfo.color||'#888'}">${zInfo.name}</b></div>
+      <div><span style="color:var(--muted)">총 근무</span><br><b>${w.endH-w.startH}시간</b></div>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════
+// SVG MAP ZOOM / PAN
+// ═══════════════════════════════════════════════════
+const MAP_VW=600, MAP_VH=560;
+const MAP_SCALE_MIN=0.5, MAP_SCALE_MAX=5;
+let mScale=1, mTx=0, mTy=0;
+
+// 구역별 중심 좌표 및 권장 줌 배율
+const ZONE_FOCUS={
+  A:{cx:154, cy:134, zoom:2.8},
+  B:{cx:446, cy:134, zoom:2.8},
+  C:{cx:154, cy:218, zoom:2.8},
+  D:{cx:446, cy:218, zoom:2.8},
+  E:{cx:300, cy:377, zoom:2.0}
+};
+
+function applyMapTransform(s, tx, ty, animate=false){
+  mScale=s; mTx=tx; mTy=ty;
+  const g=document.getElementById('mapG');
+  if(!g) return;
+  if(animate){
+    g.classList.add('animated');
+    setTimeout(()=>g.classList.remove('animated'), 420);
+  } else {
+    g.classList.remove('animated');
+  }
+  g.style.transform=`translate(${tx}px,${ty}px) scale(${s})`;
+  // 줌 레벨 표시 업데이트
+  const lv=document.getElementById('mzLevel');
+  if(lv) lv.textContent=Math.round(s*100)+'%';
+}
+
+function zoomToZone(zone){
+  const f=ZONE_FOCUS[zone];
+  if(!f) return;
+  const svg=document.getElementById('venueSVG');
+  if(!svg) return;
+  const rect=svg.getBoundingClientRect();
+  const vw=rect.width||MAP_VW;
+  const vh=rect.height||MAP_VH;
+  // SVG viewBox 비율
+  const ratio=vw/MAP_VW;
+  const s=f.zoom;
+  // 구역 중심을 SVG 뷰포트 중심에 맞추는 translate
+  const tx=(vw/2 - f.cx*s*ratio);
+  const ty=(vh/2 - f.cy*s*ratio);
+  applyMapTransform(s, tx, ty, true);
+}
+
+function mapZoomReset(animate=true){
+  applyMapTransform(1, 0, 0, animate);
+}
+
+function mapZoomStep(dir){
+  const factor = dir>0 ? 1.3 : 1/1.3;
+  const svg=document.getElementById('venueSVG');
+  const rect=svg.getBoundingClientRect();
+  const cx=rect.width/2, cy=rect.height/2;
+  mapZoomAt(cx, cy, factor);
+}
+
+function mapZoomAt(svgX, svgY, factor){
+  let ns=Math.min(MAP_SCALE_MAX, Math.max(MAP_SCALE_MIN, mScale*factor));
+  const svg=document.getElementById('venueSVG');
+  const rect=svg.getBoundingClientRect();
+  const ratio=rect.width/MAP_VW;
+  // 커서 기준 zoom: 마우스 포인트가 고정되도록 tx/ty 재계산
+  const ntx = svgX - (svgX - mTx)*(ns/mScale);
+  const nty = svgY - (svgY - mTy)*(ns/mScale);
+  applyMapTransform(ns, ntx, nty, false);
+}
+
+// 마우스 휠 줌
+(function setupSVGWheel(){
+  const svg=document.getElementById('venueSVG');
+  if(!svg) return;
+  svg.addEventListener('wheel', e=>{
+    e.preventDefault();
+    const rect=svg.getBoundingClientRect();
+    const mx=e.clientX - rect.left;
+    const my=e.clientY - rect.top;
+    const factor = e.deltaY<0 ? 1.15 : 1/1.15;
+    mapZoomAt(mx, my, factor);
+  }, {passive:false});
+})();
+
+// 마우스 드래그 패닝
+(function setupSVGDrag(){
+  const svg=document.getElementById('venueSVG');
+  if(!svg) return;
+  let dragging=false, startX=0, startY=0, origTx=0, origTy=0;
+  svg.addEventListener('mousedown', e=>{
+    if(e.button!==0) return;
+    dragging=true; startX=e.clientX; startY=e.clientY;
+    origTx=mTx; origTy=mTy;
+    svg.classList.add('panning');
+    e.preventDefault();
+  });
+  window.addEventListener('mousemove', e=>{
+    if(!dragging) return;
+    const dx=e.clientX-startX, dy=e.clientY-startY;
+    applyMapTransform(mScale, origTx+dx, origTy+dy, false);
+  });
+  window.addEventListener('mouseup', ()=>{
+    if(dragging){ dragging=false; document.getElementById('venueSVG')?.classList.remove('panning'); }
+  });
+  // 터치 패닝
+  let t0=null;
+  svg.addEventListener('touchstart', e=>{
+    if(e.touches.length===1){ t0={x:e.touches[0].clientX,y:e.touches[0].clientY,tx:mTx,ty:mTy}; }
+  },{passive:true});
+  svg.addEventListener('touchmove', e=>{
+    if(t0&&e.touches.length===1){
+      const dx=e.touches[0].clientX-t0.x, dy=e.touches[0].clientY-t0.y;
+      applyMapTransform(mScale, t0.tx+dx, t0.ty+dy, false);
+      e.preventDefault();
+    }
+  },{passive:false});
+  svg.addEventListener('touchend', ()=>{ t0=null; });
+})();
+
+// ═══════════════════════════════════════════════════
+// INLINE NAME EDIT
+// ═══════════════════════════════════════════════════
+function startNameEdit(spanEl, oldName, e) {
+  e.stopPropagation();
+  if (!spanEl || spanEl.tagName === 'INPUT') return;
+
+  // 행 전체에 편집 중 스타일
+  const row = spanEl.closest('.wr');
+  if (row) row.classList.add('editing');
+
+  // input 생성
+  const input = document.createElement('input');
+  input.className = 'rname-input';
+  input.value = oldName;
+  input.style.width = Math.max(80, spanEl.offsetWidth + 12) + 'px';
+  spanEl.replaceWith(input);
+  input.focus();
+  input.select();
+
+  // 더블 커밋 방지 플래그
+  let committed = false;
+
+  function commit() {
+    if (committed) return;
+    committed = true;
+    const newName = input.value.trim();
+    if (newName && newName !== oldName) {
+      // 현재 탭(날짜)만 수정
+      const w = DAYS[curDay].workers.find(x => x.name === oldName);
+      if (w) w.name = newName;
+      // 현재 선택된 요원 참조도 갱신
+      if (selWorker && selWorker.name === oldName) selWorker.name = newName;
+      curSearch = newName; // 검색 필드도 새 이름으로
+      document.getElementById('searchInput').value = newName;
+    }
+    renderGantt();
+    // 저장 후 선택 유지 + 도면 핀 갱신
+    if (selWorker) {
+      setTimeout(() => { showMapPin(selWorker); showMapInfo(selWorker); }, 30);
+    }
+  }
+
+  function cancel() {
+    if (committed) return;
+    committed = true;
+    renderGantt();
+  }
+
+  input.addEventListener('keydown', ev => {
+    if (ev.key === 'Enter')  { ev.preventDefault(); commit(); }
+    if (ev.key === 'Escape') { cancel(); }
+  });
+  input.addEventListener('blur', () => commit());
+}
+
+// ═══════════════════════════════════════════════════
+// GROUP MANAGEMENT — 27일 조 추가 / 삭제 / 구역 수정
+// ═══════════════════════════════════════════════════
+function addGroup() {
+  if (curDay !== 2) return;
+  const workers = DAYS[curDay].workers;
+  const maxGroup = workers.length > 0 ? Math.max(...workers.map(w => w.group)) : 0;
+  const maxNum   = workers.length > 0 ? Math.max(...workers.map(w => w.num))   : 0;
+  const newGroup = maxGroup + 1;
+  const zone = 'A';
+  const tasks = ['물품포장','물품포장','물품운반','물품운반'];
+  for (let i = 0; i < 4; i++) {
+    const num = maxNum + 1 + i;
+    const n   = String(num).padStart(3,'0');
+    workers.push({num, name:`진행요원${n}`, task:tasks[i], group:newGroup, zone, loc:'', startH:13, endH:22, color:'pink'});
+  }
+  renderGantt();
+  setTimeout(() => {
+    const hdrs = document.querySelectorAll('.grp-hdr');
+    if (hdrs.length) hdrs[hdrs.length-1].scrollIntoView({behavior:'smooth', block:'center'});
+  }, 80);
+}
+
+function deleteGroup(g, e) {
+  e.stopPropagation();
+  const cnt = DAYS[curDay].workers.filter(w => w.group === g).length;
+  if (!confirm(`조 ${g} (${cnt}명)을 삭제하시겠습니까?\n소속 요원이 모두 제거됩니다.`)) return;
+  DAYS[curDay].workers = DAYS[curDay].workers.filter(w => w.group !== g);
+  if (selWorker && selWorker.group === g) { selWorker = null; clearMapPins(); }
+  renderGantt();
+}
+
+// ── 위치 인라인 편집 ─────────────────────────────
+function startLocEdit(spanEl, g, e) {
+  e.stopPropagation();
+  if (!spanEl || spanEl.tagName === 'INPUT') return;
+
+  const workers = DAYS[curDay].workers.filter(w => w.group === g);
+  const curLoc  = workers[0]?.loc || '';
+
+  const input = document.createElement('input');
+  input.className = 'loc-input';
+  input.value = curLoc;
+  input.placeholder = '위치를 입력하세요';
+  spanEl.replaceWith(input);
+  input.focus();
+  input.select();
+
+  let committed = false;
+
+  function commit() {
+    if (committed) return;
+    committed = true;
+    const newLoc = input.value.trim();
+    // 해당 조 요원 전체에 loc 업데이트
+    DAYS[curDay].workers.filter(w => w.group === g).forEach(w => w.loc = newLoc);
+    renderGantt();
+  }
+
+  function cancel() {
+    if (committed) return;
+    committed = true;
+    renderGantt();
+  }
+
+  input.addEventListener('keydown', ev => {
+    if (ev.key === 'Enter')  { ev.preventDefault(); commit(); }
+    if (ev.key === 'Escape') { cancel(); }
+  });
+  input.addEventListener('blur', () => commit());
+}
+
+// ═══════════════════════════════════════════════════
+// ROW DRAG — 27일 조 재편성
+// ═══════════════════════════════════════════════════
+let rowDragGhost = null;
+
+function startRowDrag(e, workerName) {
+  if (curDay !== 2) return;          // 27일 탭에서만
+  e.stopPropagation();
+  e.preventDefault();
+
+  const workers = DAYS[curDay].workers;
+  const w = workers.find(x => x.name === workerName);
+  if (!w) return;
+  const origGroup = w.group;
+
+  // 고스트 레이블 생성
+  rowDragGhost = document.createElement('div');
+  rowDragGhost.className = 'row-drag-ghost';
+  rowDragGhost.textContent = `${w.name}  →  조 이동`;
+  document.body.appendChild(rowDragGhost);
+  rowDragGhost.style.left = e.clientX + 'px';
+  rowDragGhost.style.top  = e.clientY + 'px';
+
+  // 드래그 중인 행 반투명 처리
+  document.querySelectorAll(`.wr[data-name="${CSS.escape(workerName)}"]`).forEach(el => el.classList.add('row-dragging'));
+
+  function getTargetGroup(ev) {
+    // 고스트 임시 숨겨서 elementFromPoint 정확도 확보
+    if (rowDragGhost) rowDragGhost.style.display = 'none';
+    const el = document.elementFromPoint(ev.clientX, ev.clientY);
+    if (rowDragGhost) rowDragGhost.style.display = '';
+    if (!el) return null;
+    const row = el.closest('.wr');
+    const grpHdr = el.closest('.grp-hdr');
+    if (row && row.dataset.g) return parseInt(row.dataset.g);
+    if (grpHdr && grpHdr.dataset.g) return parseInt(grpHdr.dataset.g);
+    return null;
+  }
+
+  function clearHover() {
+    document.querySelectorAll('.row-drag-over, .row-drop-target').forEach(el => {
+      el.classList.remove('row-drag-over', 'row-drop-target');
+    });
+  }
+
+  function onMove(ev) {
+    rowDragGhost.style.left = ev.clientX + 'px';
+    rowDragGhost.style.top  = ev.clientY + 'px';
+    clearHover();
+    const tg = getTargetGroup(ev);
+    if (tg !== null && tg !== origGroup) {
+      // 드롭 대상 강조
+      if (rowDragGhost) rowDragGhost.style.display = 'none';
+      const el = document.elementFromPoint(ev.clientX, ev.clientY);
+      if (rowDragGhost) rowDragGhost.style.display = '';
+      if (el) {
+        const row    = el.closest('.wr');
+        const grpHdr = el.closest('.grp-hdr');
+        if (row)    row.classList.add('row-drag-over');
+        if (grpHdr) grpHdr.classList.add('row-drop-target');
+      }
+      rowDragGhost.textContent = `${workerName}  →  조 ${tg}`;
+    } else {
+      rowDragGhost.textContent = `${workerName}  →  조 이동`;
+    }
+  }
+
+  function onUp(ev) {
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('mouseup', onUp);
+
+    // ★ 고스트 제거 전에 드롭 대상 파악
+    const targetGroup = getTargetGroup(ev);
+
+    // 이후 정리
+    if (rowDragGhost) { rowDragGhost.remove(); rowDragGhost = null; }
+    clearHover();
+    document.querySelectorAll('.row-dragging').forEach(el => el.classList.remove('row-dragging'));
+
+    if (targetGroup !== null && targetGroup !== origGroup) {
+      // 조 이동: 해당 요원의 group과 zone 업데이트
+      w.group = targetGroup;
+      w.zone  = ZONE_MAP[targetGroup] || 'A';
+      if (selWorker && selWorker.name === workerName) selWorker = w;
+      renderGantt();
+    }
+  }
+
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('mouseup',   onUp);
+}
+
+// ═══════════════════════════════════════════════════
+// ZONE CLICK → 필터
+// ═══════════════════════════════════════════════════
+(function setupZoneClicks(){
+  const mapping={
+    'zone-A':'A','zone-B':'B','zone-C':'C','zone-D':'D','zone-E':'E'
+  };
+  Object.entries(mapping).forEach(([id,zone])=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+    el.addEventListener('click',()=>{
+      // 해당 구역 근무자 강조
+      const inZone=DAYS[curDay].workers.filter(w=>w.zone===zone);
+      if(inZone.length===0) return;
+      // 검색창에 구역 이름 표시
+      const zInfo=ZONE_INFO[zone];
+      document.getElementById('searchInput').value=`조${inZone[0].group}`;
+      curSearch=`조${inZone[0].group}`;
+      renderGantt();
+      // 첫 번째 근무자 선택
+      selectWorker(inZone[0].name);
+    });
+  });
+})();
+
+// ═══════════════════════════════════════════════════
+// DRAG BAR
+// ═══════════════════════════════════════════════════
+function startDrag(e,el){
+  if(e.button!==0) return;
+  e.preventDefault();
+  const startX=e.clientX;
+  const origLeft=parseInt(el.style.left);
+  const origW=parseInt(el.style.width);
+  const name=el.dataset.name;
+  const HW=hw();
+  document.body.style.cursor='grabbing';
+
+  function onMove(ev){
+    const dx=ev.clientX-startX;
+    const newLeft=Math.max(0,Math.min(origLeft+dx, (24-Math.round(origW/HW))*HW));
+    el.style.left=newLeft+'px';
+    const newStart=Math.round(newLeft/HW);
+    const newEnd=newStart+Math.round(origW/HW);
+    el.textContent=origW>80?`${newStart}:00~${newEnd}:00`:'';
+    // update tooltip
+    el.dataset.s=newStart; el.dataset.e=newEnd;
+  }
+  function onUp(ev){
+    document.removeEventListener('mousemove',onMove);
+    document.removeEventListener('mouseup',onUp);
+    document.body.style.cursor='';
+    const finalLeft=parseInt(el.style.left);
+    const newStart=Math.round(finalLeft/HW);
+    const newEnd=newStart+Math.round(origW/HW);
+    // update data
+    const ws=DAYS[curDay].workers;
+    const w=ws.find(x=>x.name===name);
+    if(w){w.startH=newStart;w.endH=newEnd;}
+    updateStats();
+  }
+  document.addEventListener('mousemove',onMove);
+  document.addEventListener('mouseup',onUp);
+}
+
+// ═══════════════════════════════════════════════════
+// LIVE DUTY — 현재 근무중 판별 및 패널 업데이트
+// ═══════════════════════════════════════════════════
+function isOnDuty(w){
+  const now=new Date();
+  const todayStr=now.toISOString().slice(0,10);
+  if(todayStr!==DAYS[curDay].date) return false;
+  const curH=now.getHours()+now.getMinutes()/60;
+  return curH>=w.startH && curH<w.endH;
+}
+
+function updateLiveDutyPanel(){
+  const now=new Date();
+  const hh=String(now.getHours()).padStart(2,'0');
+  const mm=String(now.getMinutes()).padStart(2,'0');
+  const ws=DAYS[curDay].workers;
+  const onDuty=ws.filter(w=>isOnDuty(w));
+
+  // stats badge
+  document.getElementById('st-onduty').textContent=onDuty.length+'명';
+
+  // duty panel time
+  document.getElementById('dutyTime').textContent=`${hh}:${mm} 기준`;
+  document.getElementById('dutyTotal').textContent=`${onDuty.length}명 근무중`;
+
+  // zone breakdown
+  const zoneCounts={A:0,B:0,C:0,D:0,E:0};
+  onDuty.forEach(w=>{if(w.zone in zoneCounts) zoneCounts[w.zone]++;});
+  let html='';
+  const zoneLabels={A:'가 구역 스탠딩 (조1~3)',B:'나 구역 스탠딩 (조4~6)',C:'다 구역 스탠딩 (조7~9)',D:'라 구역 스탠딩 (조10~12)',E:'지정석 (조13~15)'};
+  const zoneColors={A:'#5DADE2',B:'#5DADE2',C:'#27AE60',D:'#27AE60',E:'#E74C3C'};
+  for(const [zk,zLabel] of Object.entries(zoneLabels)){
+    const cnt=zoneCounts[zk];
+    const isActive=cnt>0;
+    html+=`<div class="duty-zone-row">`;
+    html+=`<span style="display:flex;align-items:center;gap:6px">`;
+    html+=`<span style="width:8px;height:8px;border-radius:2px;background:${zoneColors[zk]};flex-shrink:0;display:inline-block"></span>`;
+    html+=`${zLabel}</span>`;
+    html+=`<span class="duty-zone-cnt${isActive?'':' zero'}">${cnt}명</span>`;
+    html+=`</div>`;
+  }
+
+  // 비근무 시간대 안내
+  if(onDuty.length===0){
+    const todayStr=new Date().toISOString().slice(0,10);
+    if(todayStr!==DAYS[curDay].date){
+      html=`<div style="text-align:center;color:var(--muted);padding:8px;font-size:11px">현재 날짜와 다른 날짜 탭입니다<br>실제 근무 현황은 해당 일자 탭에서 확인하세요</div>`;
+    } else {
+      html=`<div style="text-align:center;color:var(--muted);padding:8px;font-size:11px">현재 시각(${hh}:${mm})은 근무 시간 외입니다<br>근무 시간: 13:00 ~ 22:00</div>`;
+    }
+  }
+  document.getElementById('dutyZoneList').innerHTML=html;
+}
+
+function applyOnDutyHighlight(){
+  // 바(bar) 요소에 on-duty 클래스 실시간 적용/제거
+  document.querySelectorAll('.bar').forEach(el=>{
+    const name=el.dataset.name;
+    const w=DAYS[curDay].workers.find(x=>x.name===name);
+    if(!w) return;
+    if(isOnDuty(w)) el.classList.add('on-duty');
+    else el.classList.remove('on-duty');
+  });
+  // 행(wr) 요소에도 on-duty 클래스 적용
+  document.querySelectorAll('.wr').forEach(row=>{
+    const barEl=row.querySelector('.bar');
+    if(!barEl) return;
+    const name=barEl.dataset.name;
+    const w=DAYS[curDay].workers.find(x=>x.name===name);
+    if(!w) return;
+    if(isOnDuty(w)) row.classList.add('on-duty');
+    else row.classList.remove('on-duty');
+  });
+}
+
+// ═══════════════════════════════════════════════════
+// CURRENT TIME LINE
+// ═══════════════════════════════════════════════════
+function updateTimeLine(){
+  const inner=document.getElementById('ganttInner');
+  const old=inner.querySelector('.tline');
+  if(old) old.remove();
+  const now=new Date();
+  const todayStr=now.toISOString().slice(0,10);
+  if(todayStr!==DAYS[curDay].date) return;
+  const HW=hw();
+  const LW=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--lw'));
+  const totalH=now.getHours()+now.getMinutes()/60;
+  const line=document.createElement('div');
+  line.className='tline';
+  const t=`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  line.setAttribute('data-t',t);
+  line.style.left=(LW+totalH*HW)+'px';
+  line.style.top='40px';
+  line.style.height=(inner.scrollHeight||9999)+'px';
+  inner.appendChild(line);
+}
+
+// ═══════════════════════════════════════════════════
+// VIEW TOGGLE
+// ═══════════════════════════════════════════════════
+function setView(v){
+  curView=v;
+  ['both','gantt','map'].forEach(x=>document.getElementById(`vt-${x}`).classList.toggle('on',x===v));
+  const gp=document.getElementById('ganttPanel');
+  const mp=document.getElementById('mapPanel');
+  if(v==='gantt'){gp.className='gantt-panel full';mp.className='map-panel hidden';}
+  else if(v==='map'){gp.className='gantt-panel';gp.style.flex='0 0 0%';gp.style.overflow='hidden';mp.className='map-panel full';}
+  else{gp.className='gantt-panel half';gp.style.flex='';mp.className='map-panel';}
+}
+
+// ═══════════════════════════════════════════════════
+// MAP PANEL VISIBILITY — 27일 전용 자동 제어
+// ═══════════════════════════════════════════════════
+function setMapPanelForDay(idx){
+  const isMapDay = idx === 2;
+  const gp = document.getElementById('ganttPanel');
+  const mp = document.getElementById('mapPanel');
+  const vtWrap = document.getElementById('viewToggleWrap');
+  const vtSep  = document.getElementById('viewToggleSep');
+  const vtLbl  = document.getElementById('viewToggleLbl');
+  const addBtn = document.getElementById('addGroupBtn');
+
+  // 조 추가 버튼: 27일 탭에서만 표시
+  if(addBtn) addBtn.style.display = isMapDay ? 'flex' : 'none';
+
+  // 27일 탭: 총 투입 + 현재 근무중만 표시, 나머지 숨김
+  ['sc-pack','sc-carry','sc-groups','sc-time'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.style.display = isMapDay ? 'none' : '';
+  });
+
+  if(isMapDay){
+    // 27일: 뷰토글 표시, 현재 curView 반영
+    vtWrap.style.display = ''; vtSep.style.display = ''; vtLbl.style.display = '';
+    if(curView === 'gantt'){
+      gp.className='gantt-panel full'; gp.style.flex='';
+      mp.className='map-panel hidden';
+    } else if(curView === 'map'){
+      gp.className='gantt-panel'; gp.style.flex='0 0 0%'; gp.style.overflow='hidden';
+      mp.className='map-panel full';
+    } else {
+      curView='both';
+      gp.className='gantt-panel half'; gp.style.flex='';
+      mp.className='map-panel';
+    }
+    // vt-btn 상태 동기
+    ['both','gantt','map'].forEach(x=>document.getElementById(`vt-${x}`).classList.toggle('on',x===curView));
+  } else {
+    // 25일·26일: 도면 강제 숨김, Gantt 전체 너비, 뷰토글 숨김
+    curView = 'gantt';
+    vtWrap.style.display = 'none'; vtSep.style.display = 'none'; vtLbl.style.display = 'none';
+    gp.className='gantt-panel full'; gp.style.flex='';
+    mp.className='map-panel hidden';
+  }
+}
+
+function toggleMapPanel(){
+  // 도면 숨기기/보이기 (27일 탭 전용)
+  const btn = document.getElementById('mapToggleBtn');
+  if(curView === 'both'){
+    setView('gantt');
+    btn.textContent = '▶ 도면 보이기';
+  } else {
+    setView('both');
+    btn.textContent = '◀ 도면 숨기기';
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// DAY SWITCH
+// ═══════════════════════════════════════════════════
+function switchDay(idx){
+  curDay = idx;
+  selWorker = null;
+  curSearch = ''; document.getElementById('searchInput').value = '';
+  curFilter = 'all'; setFilter('all');
+  clearMapPins();
+  document.getElementById('mapInfo').innerHTML = '근무자를 검색하거나 Gantt에서 이름을 클릭하면<br>도면상 위치가 표시됩니다.';
+  document.getElementById('mapInfo').className = 'map-info none';
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('on', i===idx));
+  // 27일 탭이면 curView를 both로 리셋
+  if(idx === 2 && curView === 'gantt') curView = 'both';
+  setMapPanelForDay(idx);
+  // 도면 숨기기 버튼 텍스트 리셋
+  const btn = document.getElementById('mapToggleBtn');
+  if(btn) btn.textContent = '◀ 도면 숨기기';
+  renderGantt();
+}
+
+// ═══════════════════════════════════════════════════
+// TOOLTIP
+// ═══════════════════════════════════════════════════
+function showTip(e,el){
+  const ttp=document.getElementById('ttp');
+  const name=el.dataset.name,task=el.dataset.task,g=el.dataset.g,s=el.dataset.s,en=el.dataset.e;
+  const w=DAYS[curDay].workers.find(x=>x.name===name);
+  const zInfo=ZONE_INFO[w?.zone]||{name:'미지정',color:'#888'};
+  ttp.innerHTML=`<b style="font-size:12px">${name}</b><br>임무: ${task} · 조 ${g}<br>⏱ ${s}:00 ~ ${en}:00 (${en-s}h)<br><span style="color:${zInfo.color}">📍 ${zInfo.name}</span>`;
+  ttp.style.display='block';
+  positionTip(e);
+}
+function hideTip(){document.getElementById('ttp').style.display='none';}
+function positionTip(e){
+  const t=document.getElementById('ttp');
+  t.style.left=(e.clientX+14)+'px';
+  t.style.top=(e.clientY-70)+'px';
+}
+document.addEventListener('mousemove',e=>{
+  const t=document.getElementById('ttp');
+  if(t.style.display==='block') positionTip(e);
+});
+
+// ═══════════════════════════════════════════════════
+// CLOCK + LIVE DUTY TICK
+// ═══════════════════════════════════════════════════
+function tick(){
+  const n=new Date();
+  document.getElementById('clk').textContent='현재 시각 '+n.toLocaleString('ko-KR',{hour12:false});
+  updateTimeLine();
+  updateLiveDutyPanel();
+  applyOnDutyHighlight();
+}
+setInterval(tick,1000); tick();
+
+// ═══════════════════════════════════════════════════
+// INIT — 초기 로드: 25일 탭, 도면 숨김
+// ═══════════════════════════════════════════════════
+setMapPanelForDay(0);  // 도면 패널 숨김 + Gantt 전체 너비
+renderGantt();
+</script>
+</body>
+</html>

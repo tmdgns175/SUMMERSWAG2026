@@ -84,14 +84,15 @@ body{font-family:'Malgun Gothic','Apple SD Gothic Neo',sans-serif;background:var
 .hc.night{background:rgba(0,0,0,.22)}.hc.work{background:rgba(255,153,204,.22)}
 
 /* ── GROUP HEADER ── */
-.grp-hdr{display:flex;background:linear-gradient(to right,#EEF3FA,#f8f9fa);border-top:2px solid var(--navy);border-bottom:1px solid #b8c8da;cursor:pointer;user-select:none;transition:background .15s}
-.grp-hdr:hover{background:linear-gradient(to right,#dce8f5,#edf2f7)}
+.grp-hdr{display:flex;background:#EEF3FA;border-top:2px solid var(--navy);border-bottom:1px solid #b8c8da;cursor:pointer;user-select:none;transition:background .15s}
+.grp-hdr:hover{background:#dce8f5}
 .grp-lbl{width:var(--lw);min-width:var(--lw);padding:5px 12px;font-size:12px;font-weight:700;color:var(--navy);border-right:2px solid var(--navy);position:sticky;left:0;background:#EEF3FA;display:flex;align-items:center;gap:6px}
 .grp-badge{background:var(--navy);color:#fff;border-radius:4px;padding:1px 7px;font-size:11px}
 .grp-arrow{font-size:10px;margin-left:auto;transition:transform .2s}
 .grp-hdr.collapsed .grp-arrow{transform:rotate(-90deg)}
 .grp-tl{flex:1;display:flex}
 .ghb{border-right:1px solid #dde;background:transparent}
+.ghb.night{background:rgba(26,58,95,.08)}.ghb.work{background:rgba(255,153,204,.10)}
 
 /* ── WORKER ROW ── */
 .wr{display:flex;border-bottom:1px solid var(--border);transition:background .1s;overflow:visible}
@@ -107,7 +108,46 @@ body{font-family:'Malgun Gothic','Apple SD Gothic Neo',sans-serif;background:var
 .t운반{background:#E0EFFF;color:#2D6BAD;border:1px solid #A8CFF0}
 .rtl{flex:1;display:flex;position:relative;align-items:center}
 .hbg{border-right:1px solid var(--border);flex-shrink:0}
-.hbg.night{background:rgba(26,58,95,.06)}.hbg.work{background:rgba(255,153,204,.06)}
+.hbg.night{background:rgba(26,58,95,.08)}.hbg.work{background:rgba(255,153,204,.10)}
+
+/* ── CUSTOM TASK (27일 전용) ── */
+.rtask-custom{font-size:10px;padding:2px 8px;border-radius:10px;white-space:nowrap;flex-shrink:0;cursor:pointer;border:1px solid rgba(0,0,0,.12);font-weight:600;transition:all .12s;max-width:90px;overflow:hidden;text-overflow:ellipsis}
+.rtask-custom:hover{filter:brightness(.88)}
+.rtask-custom.unassigned{background:#f0f0f0;color:#999;border:1px dashed #bbb;font-weight:400}
+.task-mgr-btn{padding:4px 10px;background:var(--navy);color:#fff;border:none;border-radius:6px;font-size:11px;cursor:pointer;font-weight:600;white-space:nowrap;flex-shrink:0}
+.task-mgr-btn:hover{background:var(--navy2)}
+#customTaskGroup{display:none;align-items:center;gap:6px;flex-shrink:0}
+#taskFilterBtns{display:flex;gap:4px;flex-wrap:wrap}
+/* Task Manager Modal */
+.task-mgr-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:2000;display:flex;align-items:center;justify-content:center}
+.task-mgr{background:#fff;border-radius:12px;padding:22px;min-width:340px;max-width:440px;box-shadow:0 8px 40px rgba(0,0,0,.28);width:90vw}
+.task-mgr-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.task-mgr-title h3{font-size:14px;font-weight:700;color:var(--navy)}
+.task-mgr-close{cursor:pointer;font-size:20px;color:var(--muted);line-height:1;padding:2px 6px;border-radius:4px}
+.task-mgr-close:hover{background:var(--bg2);color:var(--text)}
+.task-list{display:flex;flex-direction:column;gap:7px;max-height:240px;overflow-y:auto;margin-bottom:14px;padding-right:2px}
+.task-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:#fafafa}
+.task-item-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
+.task-item-name{flex:1;font-size:12px;font-weight:600}
+.task-item-cnt{font-size:10px;color:var(--muted);padding:1px 6px;background:var(--bg2);border-radius:8px}
+.task-item-del{width:22px;height:22px;border:1px solid #ddd;border-radius:4px;background:#fff;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;color:#bbb;transition:all .12s;flex-shrink:0}
+.task-item-del:hover{background:#fee;border-color:#e74c3c;color:#e74c3c}
+.task-add-form{border-top:1px solid var(--border);padding-top:12px;display:flex;flex-direction:column;gap:10px}
+.task-add-form-row{display:flex;gap:8px;align-items:center}
+.task-name-input{flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit}
+.task-name-input:focus{outline:none;border-color:var(--navy)}
+.color-swatches{display:flex;gap:5px;flex-wrap:wrap}
+.color-sw{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .15s;flex-shrink:0}
+.color-sw.on{border-color:#333;box-shadow:0 0 0 2px #fff,0 0 0 4px #333;transform:scale(1.1)}
+.task-add-btn{padding:7px 14px;background:var(--navy);color:#fff;border:none;border-radius:6px;font-size:12px;cursor:pointer;font-weight:600;white-space:nowrap}
+.task-add-btn:hover{background:var(--navy2)}
+/* Task Assignment Dropdown */
+.task-dropdown{position:fixed;background:#fff;border:1px solid var(--border);border-radius:8px;padding:5px;box-shadow:0 4px 20px rgba(0,0,0,.18);z-index:3000;min-width:160px}
+.task-dd-item{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:5px;cursor:pointer;font-size:12px;white-space:nowrap;transition:background .1s}
+.task-dd-item:hover{background:var(--bg2)}
+.task-dd-item.active{font-weight:700;color:var(--navy)}
+.task-dd-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.task-dd-sep{height:1px;background:var(--border);margin:4px 0}
 
 /* ── BAR ── */
 .bar{position:absolute;border-radius:4px;top:50%;transform:translateY(-50%);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;overflow:hidden;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.18);border:1px solid rgba(0,0,0,.08);cursor:grab;transition:height .12s,box-shadow .12s;user-select:none}
@@ -406,10 +446,19 @@ body{font-family:'Malgun Gothic','Apple SD Gothic Neo',sans-serif;background:var
     <span class="clear-btn" onclick="clearSearch()">✕</span>
   </div>
   <div class="tb-sep"></div>
-  <span class="filter-lbl">임무</span>
-  <div class="flt-btn on" id="f-all" onclick="setFilter('all')">전체</div>
-  <div class="flt-btn pink" id="f-포장" onclick="setFilter('포장')">📦 물품포장</div>
-  <div class="flt-btn orange" id="f-운반" onclick="setFilter('운반')">🚚 물품운반</div>
+  <!-- 25/26일 기본 임무 필터 -->
+  <div id="defaultTaskGroup" style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+    <span class="filter-lbl">임무</span>
+    <div class="flt-btn on" id="f-all" onclick="setFilter('all')">전체</div>
+    <div class="flt-btn pink" id="f-포장" onclick="setFilter('포장')">📦 물품포장</div>
+    <div class="flt-btn orange" id="f-운반" onclick="setFilter('운반')">🚚 물품운반</div>
+  </div>
+  <!-- 27일 커스텀 임무 필터 -->
+  <div id="customTaskGroup">
+    <span class="filter-lbl">임무</span>
+    <div id="taskFilterBtns"></div>
+    <button class="task-mgr-btn" onclick="openTaskManager()">⚙ 임무 관리</button>
+  </div>
   <div class="tb-sep"></div>
   <div class="zoom-grp">
     <span class="filter-lbl">줌</span>
@@ -482,131 +531,108 @@ body{font-family:'Malgun Gothic','Apple SD Gothic Neo',sans-serif;background:var
       <div class="map-svg-wrap">
         <svg id="venueSVG" viewBox="0 0 600 560" width="100%" style="display:block">
           <g id="mapG">
-          <!-- 배경 -->
           <rect width="600" height="560" fill="#EFF4F8" rx="12"/>
-          <!-- 제목 -->
           <text x="300" y="21" text-anchor="middle" font-size="13" font-weight="700" fill="#1A3A5F">2026 흠뻑쇼 의정부 공연장</text>
-          <!-- 외곽 펜스 -->
           <rect x="15" y="28" width="570" height="515" rx="10" fill="none" stroke="#1A3A5F" stroke-width="2" stroke-dasharray="8,4"/>
 
-          <!-- ▣ STAGE -->
-          <rect x="145" y="36" width="310" height="52" rx="10" fill="#CDD5DC" stroke="#A0ADB8" stroke-width="2"/>
+          <!-- ═══ I자형 무대 전체 (하위 레이어) ═══
+               ①상단 가로바 → ②상단 세로줄(가↔나) → ③중앙 가로바(전체폭) → ④하단 세로줄(다↔라) -->
+          <rect x="60"  y="36"  width="480" height="52" rx="10" fill="#CDD5DC" stroke="#A0ADB8" stroke-width="2"/>
           <text x="300" y="67" text-anchor="middle" font-size="14" font-weight="700" fill="#1A3A5F" letter-spacing="3">STAGE</text>
+          <rect x="252" y="88"  width="96"  height="84" fill="#CDD5DC" stroke="#A0ADB8" stroke-width="1.5"/>
+          <rect x="30"  y="172" width="540" height="22" rx="3" fill="#CDD5DC" stroke="#A0ADB8" stroke-width="1.5"/>
+          <rect x="252" y="194" width="96"  height="72" rx="6" fill="#C5D8CC" opacity=".55"/>
+          <text x="300" y="232" text-anchor="middle" font-size="9" fill="#5D6D7E">중앙 통로</text>
 
-          <!-- ▣ 가 구역 (zone-A, 스탠딩 전방 좌) -->
-          <rect id="zone-A" class="zone-area" x="55" y="96" width="198" height="76" rx="10" fill="#AED6F1" stroke="#5DADE2" stroke-width="2.5"/>
-          <text x="154" y="134" text-anchor="middle" font-size="28" font-weight="900" fill="#1A5C87">가</text>
-          <text x="154" y="152" text-anchor="middle" font-size="10" fill="#2D6BAD">스탠딩</text>
-          <text x="154" y="165" text-anchor="middle" font-size="9" fill="#5DADE2">조 1·2·3</text>
+          <!-- ▣ 가 구역 (zone-A) -->
+          <rect id="zone-A" class="zone-area" x="32" y="96" width="217" height="76" rx="10" fill="#AED6F1" stroke="#5DADE2" stroke-width="2.5"/>
+          <text x="140" y="131" text-anchor="middle" font-size="28" font-weight="900" fill="#1A5C87">가</text>
+          <text x="140" y="155" text-anchor="middle" font-size="10" fill="#2D6BAD">스탠딩</text>
 
-          <!-- 중앙 통로 (가↔나) -->
-          <rect x="255" y="96" width="90" height="76" rx="6" fill="#D0E8F5" opacity=".55"/>
-          <text x="300" y="136" text-anchor="middle" font-size="9" fill="#5D6D7E">중앙 통로</text>
+          <!-- ▣ 나 구역 (zone-B) -->
+          <rect id="zone-B" class="zone-area" x="351" y="96" width="217" height="76" rx="10" fill="#AED6F1" stroke="#5DADE2" stroke-width="2.5"/>
+          <text x="459" y="131" text-anchor="middle" font-size="28" font-weight="900" fill="#1A5C87">나</text>
+          <text x="459" y="155" text-anchor="middle" font-size="10" fill="#2D6BAD">스탠딩</text>
 
-          <!-- ▣ 나 구역 (zone-B, 스탠딩 전방 우) -->
-          <rect id="zone-B" class="zone-area" x="347" y="96" width="198" height="76" rx="10" fill="#AED6F1" stroke="#5DADE2" stroke-width="2.5"/>
-          <text x="446" y="134" text-anchor="middle" font-size="28" font-weight="900" fill="#1A5C87">나</text>
-          <text x="446" y="152" text-anchor="middle" font-size="10" fill="#2D6BAD">스탠딩</text>
-          <text x="446" y="165" text-anchor="middle" font-size="9" fill="#5DADE2">조 4·5·6</text>
+          <!-- ▣ 다 구역 (zone-C) -->
+          <rect id="zone-C" class="zone-area" x="32" y="194" width="217" height="72" rx="10" fill="#A9DFBF" stroke="#27AE60" stroke-width="2.5"/>
+          <text x="140" y="228" text-anchor="middle" font-size="28" font-weight="900" fill="#1E5631">다</text>
+          <text x="140" y="250" text-anchor="middle" font-size="10" fill="#196F3D">스탠딩</text>
 
-          <!-- ▣ 다 구역 (zone-C, 스탠딩 후방 좌) -->
-          <rect id="zone-C" class="zone-area" x="55" y="180" width="198" height="76" rx="10" fill="#A9DFBF" stroke="#27AE60" stroke-width="2.5"/>
-          <text x="154" y="218" text-anchor="middle" font-size="28" font-weight="900" fill="#1E5631">다</text>
-          <text x="154" y="236" text-anchor="middle" font-size="10" fill="#196F3D">스탠딩</text>
-          <text x="154" y="249" text-anchor="middle" font-size="9" fill="#27AE60">조 7·8·9</text>
-
-          <!-- 중앙 통로 (다↔라) -->
-          <rect x="255" y="180" width="90" height="76" rx="6" fill="#C5D8CC" opacity=".55"/>
-          <text x="300" y="220" text-anchor="middle" font-size="9" fill="#5D6D7E">중앙 통로</text>
-
-          <!-- ▣ 라 구역 (zone-D, 스탠딩 후방 우) -->
-          <rect id="zone-D" class="zone-area" x="347" y="180" width="198" height="76" rx="10" fill="#A9DFBF" stroke="#27AE60" stroke-width="2.5"/>
-          <text x="446" y="218" text-anchor="middle" font-size="28" font-weight="900" fill="#1E5631">라</text>
-          <text x="446" y="236" text-anchor="middle" font-size="10" fill="#196F3D">스탠딩</text>
-          <text x="446" y="249" text-anchor="middle" font-size="9" fill="#27AE60">조 10·11·12</text>
+          <!-- ▣ 라 구역 (zone-D) -->
+          <rect id="zone-D" class="zone-area" x="351" y="194" width="217" height="72" rx="10" fill="#A9DFBF" stroke="#27AE60" stroke-width="2.5"/>
+          <text x="459" y="228" text-anchor="middle" font-size="28" font-weight="900" fill="#1E5631">라</text>
+          <text x="459" y="250" text-anchor="middle" font-size="10" fill="#196F3D">스탠딩</text>
 
           <!-- ▣ CONSOLE -->
-          <rect x="213" y="264" width="174" height="28" rx="8" fill="#CDD5DC" stroke="#A0ADB8" stroke-width="1.5"/>
-          <text x="300" y="282" text-anchor="middle" font-size="11" font-weight="700" fill="#2C3E50" letter-spacing="2">CONSOLE</text>
+          <rect x="213" y="274" width="174" height="28" rx="8" fill="#CDD5DC" stroke="#A0ADB8" stroke-width="1.5"/>
+          <text x="300" y="292" text-anchor="middle" font-size="11" font-weight="700" fill="#2C3E50" letter-spacing="2">CONSOLE</text>
 
-          <!-- 구분선 + 지정석 구역 레이블 -->
-          <line x1="18" y1="298" x2="582" y2="298" stroke="#B0BEC5" stroke-width="1" stroke-dasharray="4,3"/>
-          <text x="300" y="310" text-anchor="middle" font-size="10" font-weight="700" fill="#7F8C8D">━━  지정석 구역  ━━</text>
+          <line x1="18" y1="310" x2="582" y2="310" stroke="#B0BEC5" stroke-width="1" stroke-dasharray="4,3"/>
+          <text x="300" y="321" text-anchor="middle" font-size="10" font-weight="700" fill="#7F8C8D">━━  지정석 구역  ━━</text>
 
-          <!-- ══ 1F 지정석 ══ -->
-          <text x="23" y="330" font-size="9" font-weight="700" fill="#7B241C">1F</text>
-          <rect x="35" y="316" width="26" height="40" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1.2"/><text x="48" y="340" text-anchor="middle" font-size="10" font-weight="700" fill="#7D6608">Q</text>
-          <rect x="63" y="316" width="26" height="40" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1.2"/><text x="76" y="340" text-anchor="middle" font-size="10" font-weight="700" fill="#7D6608">P</text>
-          <rect x="91" y="316" width="26" height="40" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1.2"/><text x="104" y="340" text-anchor="middle" font-size="10" font-weight="700" fill="#7D6608">O</text>
-          <rect x="119" y="316" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="132" y="335" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">N</text><text x="132" y="347" text-anchor="middle" font-size="7" fill="#C0392B">지정석</text>
-          <rect x="147" y="316" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="160" y="335" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">M</text><text x="160" y="347" text-anchor="middle" font-size="7" fill="#C0392B">지정석</text>
-          <rect x="175" y="316" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="188" y="335" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">L</text><text x="188" y="347" text-anchor="middle" font-size="7" fill="#C0392B">지정석</text>
-          <rect x="203" y="316" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="216" y="335" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">K</text><text x="216" y="347" text-anchor="middle" font-size="7" fill="#C0392B">지정석</text>
-          <rect x="231" y="316" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="244" y="335" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">J</text><text x="244" y="347" text-anchor="middle" font-size="7" fill="#C0392B">지정석</text>
-          <rect x="259" y="316" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="272" y="335" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">I</text><text x="272" y="347" text-anchor="middle" font-size="7" fill="#C0392B">지정석</text>
-          <rect x="287" y="316" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="300" y="335" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">H</text><text x="300" y="347" text-anchor="middle" font-size="7" fill="#C0392B">지정석</text>
-          <rect x="315" y="316" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="328" y="335" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">G</text><text x="328" y="347" text-anchor="middle" font-size="7" fill="#C0392B">지정석</text>
-          <rect x="343" y="316" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="356" y="335" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">F</text><text x="356" y="347" text-anchor="middle" font-size="7" fill="#C0392B">지정석</text>
-          <rect x="371" y="316" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="384" y="335" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">E</text><text x="384" y="347" text-anchor="middle" font-size="7" fill="#C0392B">지정석</text>
-          <rect x="399" y="316" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="412" y="335" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">D</text><text x="412" y="347" text-anchor="middle" font-size="7" fill="#C0392B">지정석</text>
-          <rect x="427" y="316" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="440" y="335" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">C</text><text x="440" y="347" text-anchor="middle" font-size="7" fill="#C0392B">지정석</text>
-          <rect x="455" y="316" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="468" y="335" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">B</text><text x="468" y="347" text-anchor="middle" font-size="7" fill="#C0392B">지정석</text>
-          <rect x="483" y="316" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="496" y="335" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">A</text><text x="496" y="347" text-anchor="middle" font-size="7" fill="#C0392B">지정석</text>
-          <rect x="511" y="316" width="26" height="40" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1.2"/><text x="524" y="340" text-anchor="middle" font-size="10" font-weight="700" fill="#7D6608">U</text>
-          <rect x="539" y="316" width="26" height="40" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1.2"/><text x="552" y="340" text-anchor="middle" font-size="10" font-weight="700" fill="#7D6608">T</text>
+          <!-- 1F -->
+          <text x="23" y="342" font-size="9" font-weight="700" fill="#7B241C">1F</text>
+          <rect x="35"  y="326" width="26" height="40" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1.2"/><text x="48"  y="350" text-anchor="middle" font-size="10" font-weight="700" fill="#7D6608">Q</text>
+          <rect x="63"  y="326" width="26" height="40" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1.2"/><text x="76"  y="350" text-anchor="middle" font-size="10" font-weight="700" fill="#7D6608">P</text>
+          <rect x="91"  y="326" width="26" height="40" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1.2"/><text x="104" y="350" text-anchor="middle" font-size="10" font-weight="700" fill="#7D6608">O</text>
+          <rect x="119" y="326" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="132" y="350" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">N</text>
+          <rect x="147" y="326" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="160" y="350" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">M</text>
+          <rect x="175" y="326" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="188" y="350" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">L</text>
+          <rect x="203" y="326" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="216" y="350" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">K</text>
+          <rect x="231" y="326" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="244" y="350" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">J</text>
+          <rect x="259" y="326" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="272" y="350" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">I</text>
+          <rect x="287" y="326" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="300" y="350" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">H</text>
+          <rect x="315" y="326" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="328" y="350" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">G</text>
+          <rect x="343" y="326" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="356" y="350" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">F</text>
+          <rect x="371" y="326" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="384" y="350" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">E</text>
+          <rect x="399" y="326" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="412" y="350" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">D</text>
+          <rect x="427" y="326" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="440" y="350" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">C</text>
+          <rect x="455" y="326" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="468" y="350" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">B</text>
+          <rect x="483" y="326" width="26" height="40" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="496" y="350" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">A</text>
+          <rect x="511" y="326" width="26" height="40" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1.2"/><text x="524" y="350" text-anchor="middle" font-size="10" font-weight="700" fill="#7D6608">U</text>
+          <rect x="539" y="326" width="26" height="40" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1.2"/><text x="552" y="350" text-anchor="middle" font-size="10" font-weight="700" fill="#7D6608">T</text>
 
-          <!-- ══ 2F 지정석 ══ -->
-          <text x="50" y="373" font-size="9" font-weight="700" fill="#7B241C">2F</text>
-          <rect x="67" y="362" width="24" height="36" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1.2"/><text x="79" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">Q</text>
-          <rect x="93" y="362" width="24" height="36" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1.2"/><text x="105" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">P</text>
-          <rect x="119" y="362" width="24" height="36" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1.2"/><text x="131" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">O</text>
-          <rect x="145" y="362" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="157" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">N</text>
-          <rect x="171" y="362" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="183" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">M</text>
-          <rect x="197" y="362" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="209" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">L</text>
-          <rect x="223" y="362" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="235" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">K</text>
-          <rect x="249" y="362" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="261" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">J</text>
-          <rect x="275" y="362" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="287" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">I</text>
-          <rect x="301" y="362" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="313" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">H</text>
-          <rect x="327" y="362" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="339" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">G</text>
-          <rect x="353" y="362" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="365" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">F</text>
-          <rect x="379" y="362" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="391" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">E</text>
-          <rect x="405" y="362" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="417" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">D</text>
-          <rect x="431" y="362" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="443" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">C</text>
-          <rect x="457" y="362" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="469" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">B</text>
-          <rect x="483" y="362" width="24" height="36" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1.2"/><text x="495" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">A</text>
-          <rect x="509" y="362" width="24" height="36" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1.2"/><text x="521" y="384" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">T</text>
+          <!-- 2F -->
+          <text x="50" y="387" font-size="9" font-weight="700" fill="#7B241C">2F</text>
+          <rect x="67"  y="374" width="24" height="36" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1.2"/><text x="79"  y="396" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">Q</text>
+          <rect x="93"  y="374" width="24" height="36" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1.2"/><text x="105" y="396" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">P</text>
+          <rect x="119" y="374" width="24" height="36" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1.2"/><text x="131" y="396" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">O</text>
+          <rect x="145" y="374" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="157" y="396" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">N</text>
+          <rect x="171" y="374" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="183" y="396" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">M</text>
+          <rect x="197" y="374" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="209" y="396" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">L</text>
+          <rect x="223" y="374" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="235" y="396" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">K</text>
+          <rect x="249" y="374" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="261" y="396" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">J</text>
+          <rect x="275" y="374" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="287" y="396" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">I</text>
+          <rect x="301" y="374" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="313" y="396" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">H</text>
+          <rect x="327" y="374" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="339" y="396" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">G</text>
+          <rect x="353" y="374" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="365" y="396" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">F</text>
+          <rect x="379" y="374" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="391" y="396" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">E</text>
+          <rect x="405" y="374" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="417" y="396" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">D</text>
+          <rect x="431" y="374" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="443" y="396" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">C</text>
+          <rect x="457" y="374" width="24" height="36" rx="3" fill="#FADBD8" stroke="#E74C3C" stroke-width="1.2"/><text x="469" y="396" text-anchor="middle" font-size="9" font-weight="700" fill="#922B21">B</text>
+          <rect x="483" y="374" width="24" height="36" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1.2"/><text x="495" y="396" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">A</text>
+          <rect x="509" y="374" width="24" height="36" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1.2"/><text x="521" y="396" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">T</text>
 
-          <!-- ══ 3F 지정석 (전체 노란) ══ -->
-          <text x="122" y="418" font-size="9" font-weight="700" fill="#7B241C">3F</text>
-          <rect x="145" y="406" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="156" y="425" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">M</text>
-          <rect x="169" y="406" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="180" y="425" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">L</text>
-          <rect x="193" y="406" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="204" y="425" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">K</text>
-          <rect x="217" y="406" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="228" y="425" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">J</text>
-          <rect x="241" y="406" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="252" y="425" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">I</text>
-          <rect x="265" y="406" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="276" y="425" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">H</text>
-          <rect x="289" y="406" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="300" y="425" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">G</text>
-          <rect x="313" y="406" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="324" y="425" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">F</text>
-          <rect x="337" y="406" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="348" y="425" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">E</text>
-          <rect x="361" y="406" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="372" y="425" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">D</text>
-          <rect x="385" y="406" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="396" y="425" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">C</text>
-          <rect x="409" y="406" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="420" y="425" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">B</text>
-          <rect x="433" y="406" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="444" y="425" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">A</text>
+          <!-- 3F -->
+          <text x="122" y="432" font-size="9" font-weight="700" fill="#7B241C">3F</text>
+          <rect x="145" y="418" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="156" y="437" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">M</text>
+          <rect x="169" y="418" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="180" y="437" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">L</text>
+          <rect x="193" y="418" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="204" y="437" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">K</text>
+          <rect x="217" y="418" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="228" y="437" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">J</text>
+          <rect x="241" y="418" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="252" y="437" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">I</text>
+          <rect x="265" y="418" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="276" y="437" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">H</text>
+          <rect x="289" y="418" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="300" y="437" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">G</text>
+          <rect x="313" y="418" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="324" y="437" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">F</text>
+          <rect x="337" y="418" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="348" y="437" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">E</text>
+          <rect x="361" y="418" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="372" y="437" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">D</text>
+          <rect x="385" y="418" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="396" y="437" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">C</text>
+          <rect x="409" y="418" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="420" y="437" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">B</text>
+          <rect x="433" y="418" width="22" height="30" rx="3" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/><text x="444" y="437" text-anchor="middle" font-size="9" font-weight="700" fill="#7D6608">A</text>
 
-          <!-- zone-E 클릭 오버레이 (지정석 전체, 반투명) -->
-          <rect id="zone-E" class="zone-area" x="18" y="313" width="564" height="128" rx="8" fill="rgba(250,219,216,0.08)" stroke="#E74C3C" stroke-width="1.2" stroke-dasharray="5,3"/>
-          <text x="300" y="453" text-anchor="middle" font-size="9" fill="#C0392B" opacity=".7">조 13·14·15</text>
+          <!-- zone-E 클릭 오버레이 -->
+          <rect id="zone-E" class="zone-area" x="18" y="323" width="564" height="132" rx="8" fill="rgba(250,219,216,0.08)" stroke="#E74C3C" stroke-width="1.2" stroke-dasharray="5,3"/>
 
-          <!-- 범례 -->
-          <rect x="30" y="466" width="12" height="12" rx="2" fill="#AED6F1" stroke="#5DADE2" stroke-width="1"/>
-          <text x="47" y="476" font-size="9" fill="#555">가·나 스탠딩 (조1~6)</text>
-          <rect x="185" y="466" width="12" height="12" rx="2" fill="#A9DFBF" stroke="#27AE60" stroke-width="1"/>
-          <text x="202" y="476" font-size="9" fill="#555">다·라 스탠딩 (조7~12)</text>
-          <rect x="350" y="466" width="12" height="12" rx="2" fill="#FADBD8" stroke="#E74C3C" stroke-width="1"/>
-          <text x="367" y="476" font-size="9" fill="#555">지정석 A-N (조13~15)</text>
-          <rect x="510" y="466" width="12" height="12" rx="2" fill="#FFF0A0" stroke="#F9A825" stroke-width="1"/>
-          <text x="527" y="476" font-size="9" fill="#555">외곽 지정석</text>
-
-          <!-- 핀 레이어 -->
           <g id="pinLayer"></g>
           </g><!-- /mapG -->
         </svg>
@@ -637,19 +663,19 @@ const ZONE_MAP={
   13:'E',14:'E',15:'E'
 };
 const ZONE_INFO={
-  A:{id:'zone-A',name:'가 구역 (스탠딩)',color:'#5DADE2',cx:154,cy:134},
-  B:{id:'zone-B',name:'나 구역 (스탠딩)',color:'#5DADE2',cx:446,cy:134},
-  C:{id:'zone-C',name:'다 구역 (스탠딩)',color:'#27AE60',cx:154,cy:218},
-  D:{id:'zone-D',name:'라 구역 (스탠딩)',color:'#27AE60',cx:446,cy:218},
-  E:{id:'zone-E',name:'지정석',color:'#E74C3C',cx:300,cy:377}
+  A:{id:'zone-A',name:'가 구역 (스탠딩)',color:'#5DADE2',cx:140,cy:134},
+  B:{id:'zone-B',name:'나 구역 (스탠딩)',color:'#5DADE2',cx:459,cy:134},
+  C:{id:'zone-C',name:'다 구역 (스탠딩)',color:'#27AE60',cx:140,cy:230},
+  D:{id:'zone-D',name:'라 구역 (스탠딩)',color:'#27AE60',cx:459,cy:230},
+  E:{id:'zone-E',name:'지정석',color:'#E74C3C',cx:300,cy:389}
 };
 // 구역 내 서브 좌표 (핀 분산 배치)
 const ZONE_PINS={
-  A:[[80,118],[110,118],[140,118],[170,118],[80,143],[110,143],[140,143],[170,143],[80,165],[110,165],[140,165],[170,165]],
-  B:[[372,118],[402,118],[432,118],[462,118],[372,143],[402,143],[432,143],[462,143],[372,165],[402,165],[432,165],[462,165]],
-  C:[[80,200],[110,200],[140,200],[170,200],[80,225],[110,225],[140,225],[170,225],[80,248],[110,248],[140,248],[170,248]],
-  D:[[372,200],[402,200],[432,200],[462,200],[372,225],[402,225],[432,225],[462,225],[372,248],[402,248],[432,248],[462,248]],
-  E:[[132,336],[160,336],[188,336],[216,336],[244,336],[272,336],[300,336],[328,336],[356,336],[384,336],[412,336],[440,336]]
+  A:[[76,116],[116,116],[158,116],[200,116],[76,134],[116,134],[158,134],[200,134],[76,155],[116,155],[158,155],[200,155]],
+  B:[[390,116],[424,116],[458,116],[492,116],[390,134],[424,134],[458,134],[492,134],[390,155],[424,155],[458,155],[492,155]],
+  C:[[76,210],[116,210],[158,210],[200,210],[76,230],[116,230],[158,230],[200,230],[76,252],[116,252],[158,252],[200,252]],
+  D:[[390,210],[424,210],[458,210],[492,210],[390,230],[424,230],[458,230],[492,230],[390,252],[424,252],[458,252],[492,252]],
+  E:[[132,346],[160,346],[188,346],[216,346],[244,346],[272,346],[300,346],[328,346],[356,346],[384,346],[412,346],[440,346]]
 };
 
 function makeWorkers(count){
@@ -660,20 +686,21 @@ function makeWorkers(count){
     const n=String(i+1).padStart(3,'0');
     const zone=ZONE_MAP[g]||'A';
     const loc=ZONE_INFO[zone]?.name||zone;
-    ws.push({num:i+1,name:`진행요원${n}`,task:tasks[i%4],group:g,zone,loc,startH:13,endH:22,color:'pink'});
+    ws.push({num:i+1,name:`진행요원${n}`,task:tasks[i%4],group:g,zone,loc,startH:13,endH:22,color:'pink',customTaskId:null});
   }
   return ws;
 }
 const DAYS=[
   {label:'6월 25일',date:'2026-06-25',type:'사전작업 1일차',workers:makeWorkers(60)},
   {label:'6월 26일',date:'2026-06-26',type:'사전작업 2일차',workers:makeWorkers(40)},
-  {label:'6월 27일',date:'2026-06-27',type:'본공연',workers:makeWorkers(60)}
+  {label:'6월 27일',date:'2026-06-27',type:'본공연',workers:makeWorkers(60),customTasks:[],taskIdCounter:0}
 ];
 
 // ═══════════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════════
 let curDay=0,zoomLv=100,curFilter='all',curSearch='',curView='both';
+let curFilter27='all';
 let selWorker=null;
 let collapsedGroups={};
 let dragState=null;
@@ -730,16 +757,20 @@ function renderGantt(){
     html+=`<div class="grp-lbl" style="min-width:${LW}px;width:${LW}px">`;
     html+=`<span class="grp-badge">조 ${g}</span>`;
     html+=`<span style="font-size:10px;color:var(--muted);font-weight:400">포장${packing}·운반${carrying}</span>`;
-    // 27일(본공연) 탭에서만 구역 배지 표시
+    // 근무위치 배지: 27일(본공연/도면 연동) 탭에서만 표시
     if(curDay===2){
       const loc=gWorkers[0]?.loc||'';
       const hasVal=loc.trim()!=='';
       html+=`<span class="loc-badge${hasVal?' has-val':''}" onclick="event.stopPropagation()" ondblclick="startLocEdit(this,${g},event)" title="더블클릭하여 위치 직접 입력">${hasVal?loc:'위치 입력...'}</span>`;
-      html+=`<span class="grp-del-btn" onclick="deleteGroup(${g},event)" title="조 ${g} 삭제">🗑</span>`;
     }
+    // 조 삭제 버튼: 전체 탭 공통
+    html+=`<span class="grp-del-btn" onclick="deleteGroup(${g},event)" title="조 ${g} 삭제">🗑</span>`;
     html+=`<span class="grp-arrow">▼</span></div>`;
     html+=`<div class="grp-tl">`;
-    for(let h=0;h<24;h++) html+=`<div class="ghb" style="width:${HW}px;min-width:${HW}px"></div>`;
+    for(let h=0;h<24;h++){
+      const gcl=NIGHT_H.includes(h)?'night':WORK_H.includes(h)?'work':'';
+      html+=`<div class="ghb${gcl?' '+gcl:''}" style="width:${HW}px;min-width:${HW}px"></div>`;
+    }
     html+=`</div></div>`;
 
     if(!collapsed){
@@ -750,11 +781,21 @@ function renderGantt(){
         const dim=!match&&(curSearch!==''||curFilter!=='all');
         html+=`<div class="wr${even?' wr-even':''}${hl?' hl':''}${dim?' dim':''}" data-name="${w.name}" data-g="${w.group}" style="height:${rowH()}px;background:${even?'var(--bg2)':'var(--bg)'}">`;
         html+=`<div class="rl" style="min-width:${LW}px;width:${LW}px" onclick="selectWorker('${w.name}')">`;
-        if(curDay===2) html+=`<span class="drag-handle" onmousedown="startRowDrag(event,'${w.name}')" title="드래그하여 조 이동">⠿</span>`;
+        html+=`<span class="drag-handle" onmousedown="startRowDrag(event,'${w.name}')" title="드래그하여 조 이동">⠿</span>`;
         html+=`<span class="rn">${w.num}</span>`;
         html+=`<span class="rname" ondblclick="startNameEdit(this,'${w.name}',event)">${w.name}</span>`;
         html+=`<span class="name-edit-btn" onclick="startNameEdit(this.previousElementSibling,'${w.name}',event)" title="이름 편집 (더블클릭도 가능)">✏</span>`;
-        html+=`<span class="rtask t${w.task.replace('물품','')}">${w.task}</span>`;
+        // 임무 배지: 27일은 커스텀 / 25·26일은 기존 고정
+        if(curDay===2){
+          const ct=(DAYS[2].customTasks||[]).find(t=>t.id===w.customTaskId);
+          if(ct){
+            html+=`<span class="rtask-custom" style="background:${ct.color}22;color:${ct.color};border-color:${ct.color}66" onclick="event.stopPropagation();openTaskDropdown(this,'${w.name}')" title="임무 변경">${ct.name}</span>`;
+          } else {
+            html+=`<span class="rtask-custom unassigned" onclick="event.stopPropagation();openTaskDropdown(this,'${w.name}')" title="임무 배당">+ 임무 배당</span>`;
+          }
+        } else {
+          html+=`<span class="rtask t${w.task.replace('물품','')}">${w.task}</span>`;
+        }
         html+=`</div>`;
         html+=`<div class="rtl" style="position:relative">`;
         for(let h=0;h<24;h++){
@@ -766,8 +807,21 @@ function renderGantt(){
         const bW=(w.endH-w.startH)*HW;
         const bH=rowH()-10;
         const sel=selWorker&&selWorker.name===w.name;
-        html+=`<div class="bar bpink${sel?' selected':''}" `;
-        html+=`style="left:${bLeft}px;width:${bW}px;height:${bH}px" `;
+        let barClass='bpink', barExtraStyle='';
+        if(curDay===2){
+          const ct=(DAYS[2].customTasks||[]).find(t=>t.id===w.customTaskId);
+          if(ct){
+            barClass='';
+            const lum=hexLum(ct.color);
+            const fg=lum>0.5?'#2a2a2a':'#fff';
+            barExtraStyle=`background:linear-gradient(135deg,${ct.color}cc,${ct.color});color:${fg};border-color:${ct.color};`;
+          } else {
+            barClass='';
+            barExtraStyle='background:linear-gradient(135deg,#d0d0d0,#b0b0b0);color:#555;border-color:#aaa;';
+          }
+        }
+        html+=`<div class="bar ${barClass}${sel?' selected':''}" `;
+        html+=`style="left:${bLeft}px;width:${bW}px;height:${bH}px;${barExtraStyle}" `;
         html+=`data-name="${w.name}" data-task="${w.task}" data-g="${w.group}" data-s="${w.startH}" data-e="${w.endH}" `;
         html+=`onmouseenter="showTip(event,this)" onmouseleave="hideTip()" `;
         html+=`onmousedown="startDrag(event,this)">`;
@@ -786,9 +840,21 @@ function renderGantt(){
 function rowH(){return Math.max(28,Math.round(zoomLv*0.34))}
 
 function matchesFilter(w){
-  if(curFilter!=='all'&&!w.task.includes(curFilter)) return false;
+  if(curDay===2){
+    // 27일: 커스텀 임무 필터
+    if(curFilter27!=='all'){
+      if(curFilter27==='none'){ if(w.customTaskId!=null) return false; }
+      else { if(w.customTaskId!==curFilter27) return false; }
+    }
+  } else {
+    if(curFilter!=='all'&&!w.task.includes(curFilter)) return false;
+  }
   if(curSearch==='') return true;
   const q=curSearch.toLowerCase();
+  if(curDay===2){
+    const ctName=(DAYS[2].customTasks||[]).find(t=>t.id===w.customTaskId)?.name||'';
+    return w.name.toLowerCase().includes(q)||ctName.toLowerCase().includes(q)||String(w.group).includes(curSearch)||`조${w.group}`.includes(curSearch);
+  }
   return w.name.toLowerCase().includes(q)||w.task.includes(curSearch)||String(w.group).includes(curSearch)||`조${w.group}`.includes(curSearch);
 }
 
@@ -941,11 +1007,11 @@ let mScale=1, mTx=0, mTy=0;
 
 // 구역별 중심 좌표 및 권장 줌 배율
 const ZONE_FOCUS={
-  A:{cx:154, cy:134, zoom:2.8},
-  B:{cx:446, cy:134, zoom:2.8},
-  C:{cx:154, cy:218, zoom:2.8},
-  D:{cx:446, cy:218, zoom:2.8},
-  E:{cx:300, cy:377, zoom:2.0}
+  A:{cx:140, cy:134, zoom:2.8},
+  B:{cx:459, cy:134, zoom:2.8},
+  C:{cx:140, cy:230, zoom:2.8},
+  D:{cx:459, cy:230, zoom:2.8},
+  E:{cx:300, cy:389, zoom:2.0}
 };
 
 function applyMapTransform(s, tx, ty, animate=false){
@@ -1038,19 +1104,55 @@ function mapZoomAt(svgX, svgY, factor){
   window.addEventListener('mouseup', ()=>{
     if(dragging){ dragging=false; document.getElementById('venueSVG')?.classList.remove('panning'); }
   });
-  // 터치 패닝
-  let t0=null;
+  // 터치 패닝 + 핀치 투 줌 (모바일 두 손가락 확대/축소)
+  let t0=null, pinch0=null;
   svg.addEventListener('touchstart', e=>{
-    if(e.touches.length===1){ t0={x:e.touches[0].clientX,y:e.touches[0].clientY,tx:mTx,ty:mTy}; }
-  },{passive:true});
+    if(e.touches.length===1){
+      t0={x:e.touches[0].clientX,y:e.touches[0].clientY,tx:mTx,ty:mTy};
+      pinch0=null;
+    } else if(e.touches.length===2){
+      t0=null;
+      const rect=svg.getBoundingClientRect();
+      const t1=e.touches[0], t2=e.touches[1];
+      const dist=Math.hypot(t1.clientX-t2.clientX, t1.clientY-t2.clientY);
+      const midX=((t1.clientX+t2.clientX)/2)-rect.left;
+      const midY=((t1.clientY+t2.clientY)/2)-rect.top;
+      pinch0={dist, midX, midY, scale:mScale, tx:mTx, ty:mTy};
+      e.preventDefault();
+    }
+  },{passive:false});
   svg.addEventListener('touchmove', e=>{
-    if(t0&&e.touches.length===1){
+    if(e.touches.length===2 && pinch0){
+      // 핀치 줌
+      const rect=svg.getBoundingClientRect();
+      const t1=e.touches[0], t2=e.touches[1];
+      const newDist=Math.hypot(t1.clientX-t2.clientX, t1.clientY-t2.clientY);
+      const factor=newDist/pinch0.dist;
+      const newScale=Math.min(MAP_SCALE_MAX, Math.max(MAP_SCALE_MIN, pinch0.scale*factor));
+      const midX=((t1.clientX+t2.clientX)/2)-rect.left;
+      const midY=((t1.clientY+t2.clientY)/2)-rect.top;
+      // 핀치 중심점이 고정되도록 tx/ty 재계산
+      const svgMidX=(pinch0.midX-pinch0.tx)/pinch0.scale;
+      const svgMidY=(pinch0.midY-pinch0.ty)/pinch0.scale;
+      const newTx=midX-svgMidX*newScale;
+      const newTy=midY-svgMidY*newScale;
+      applyMapTransform(newScale, newTx, newTy, false);
+      e.preventDefault();
+    } else if(e.touches.length===1 && t0){
+      // 단일 손가락 패닝
       const dx=e.touches[0].clientX-t0.x, dy=e.touches[0].clientY-t0.y;
       applyMapTransform(mScale, t0.tx+dx, t0.ty+dy, false);
       e.preventDefault();
     }
   },{passive:false});
-  svg.addEventListener('touchend', ()=>{ t0=null; });
+  svg.addEventListener('touchend', e=>{
+    if(e.touches.length===0){ t0=null; pinch0=null; }
+    else if(e.touches.length===1 && pinch0){
+      // 핀치 → 패닝 전환
+      pinch0=null;
+      t0={x:e.touches[0].clientX,y:e.touches[0].clientY,tx:mTx,ty:mTy};
+    }
+  });
 })();
 
 // ═══════════════════════════════════════════════════
@@ -1108,10 +1210,9 @@ function startNameEdit(spanEl, oldName, e) {
 }
 
 // ═══════════════════════════════════════════════════
-// GROUP MANAGEMENT — 27일 조 추가 / 삭제 / 구역 수정
+// GROUP MANAGEMENT — 조 추가 / 삭제 / 구역 수정 (전체 탭 공통)
 // ═══════════════════════════════════════════════════
 function addGroup() {
-  if (curDay !== 2) return;
   const workers = DAYS[curDay].workers;
   const maxGroup = workers.length > 0 ? Math.max(...workers.map(w => w.group)) : 0;
   const maxNum   = workers.length > 0 ? Math.max(...workers.map(w => w.num))   : 0;
@@ -1121,7 +1222,7 @@ function addGroup() {
   for (let i = 0; i < 4; i++) {
     const num = maxNum + 1 + i;
     const n   = String(num).padStart(3,'0');
-    workers.push({num, name:`진행요원${n}`, task:tasks[i], group:newGroup, zone, loc:'', startH:13, endH:22, color:'pink'});
+    workers.push({num, name:`진행요원${n}`, task:tasks[i], group:newGroup, zone, loc:'', startH:13, endH:22, color:'pink', customTaskId:null});
   }
   renderGantt();
   setTimeout(() => {
@@ -1459,8 +1560,15 @@ function setMapPanelForDay(idx){
   const vtLbl  = document.getElementById('viewToggleLbl');
   const addBtn = document.getElementById('addGroupBtn');
 
-  // 조 추가 버튼: 27일 탭에서만 표시
-  if(addBtn) addBtn.style.display = isMapDay ? 'flex' : 'none';
+  // 조 추가 버튼: 전체 탭에서 표시
+  if(addBtn) addBtn.style.display = 'flex';
+
+  // 임무 필터 그룹 전환: 25/26일↔27일
+  const dtg=document.getElementById('defaultTaskGroup');
+  const ctg=document.getElementById('customTaskGroup');
+  if(dtg) dtg.style.display=isMapDay?'none':'flex';
+  if(ctg) ctg.style.display=isMapDay?'flex':'none';
+  if(isMapDay) renderTaskFilterBtns();
 
   // 27일 탭: 총 투입 + 현재 근무중만 표시, 나머지 숨김
   ['sc-pack','sc-carry','sc-groups','sc-time'].forEach(id=>{
@@ -1524,6 +1632,153 @@ function switchDay(idx){
   const btn = document.getElementById('mapToggleBtn');
   if(btn) btn.textContent = '◀ 도면 숨기기';
   renderGantt();
+  // 근무 시작 시간(13:00)이 보이도록 자동 스크롤
+  scrollToWorkStart();
+}
+
+// ═══════════════════════════════════════════════════
+// CUSTOM TASKS (27일 전용)
+// ═══════════════════════════════════════════════════
+const TASK_PALETTE=['#D90429','#E67E22','#F1C40F','#27AE60','#16A085','#2980B9','#8E44AD','#E91E8C','#546E7A'];
+let _swatchColor=TASK_PALETTE[0];
+
+function hexLum(hex){
+  const r=parseInt(hex.slice(1,3),16)/255;
+  const g=parseInt(hex.slice(3,5),16)/255;
+  const b=parseInt(hex.slice(5,7),16)/255;
+  return 0.299*r+0.587*g+0.114*b;
+}
+
+function openTaskManager(){
+  _renderTaskMgr();
+  document.getElementById('taskMgrOverlay').style.display='flex';
+}
+function closeTaskManager(){
+  document.getElementById('taskMgrOverlay').style.display='none';
+}
+function _renderTaskMgr(){
+  const d=DAYS[2];
+  const tasks=d.customTasks||[];
+  let listHtml=tasks.length===0
+    ?'<div style="text-align:center;color:var(--muted);font-size:12px;padding:14px 0">아직 임무가 없습니다. 아래에서 추가해주세요.</div>'
+    :'';
+  tasks.forEach(t=>{
+    const cnt=d.workers.filter(w=>w.customTaskId===t.id).length;
+    listHtml+=`<div class="task-item">
+      <div class="task-item-dot" style="background:${t.color}"></div>
+      <span class="task-item-name">${t.name}</span>
+      <span class="task-item-cnt">${cnt}명</span>
+      <div class="task-item-del" onclick="deleteCustomTask(${t.id})" title="삭제">✕</div>
+    </div>`;
+  });
+  document.getElementById('taskMgrList').innerHTML=listHtml;
+  let swHtml=TASK_PALETTE.map(c=>`<div class="color-sw${c===_swatchColor?' on':''}" style="background:${c}" onclick="pickSwatch('${c}',this)"></div>`).join('');
+  document.getElementById('taskSwatches').innerHTML=swHtml;
+}
+function pickSwatch(c,el){
+  _swatchColor=c;
+  document.querySelectorAll('#taskSwatches .color-sw').forEach(e=>e.classList.remove('on'));
+  el.classList.add('on');
+}
+function addCustomTask(){
+  const inp=document.getElementById('taskNameInp');
+  const name=(inp.value||'').trim();
+  if(!name){inp.focus();return;}
+  const d=DAYS[2];
+  d.taskIdCounter=(d.taskIdCounter||0)+1;
+  d.customTasks.push({id:d.taskIdCounter,name,color:_swatchColor});
+  inp.value='';
+  _renderTaskMgr();
+  renderTaskFilterBtns();
+  renderGantt();
+}
+function deleteCustomTask(id){
+  const d=DAYS[2];
+  d.customTasks=d.customTasks.filter(t=>t.id!==id);
+  d.workers.forEach(w=>{if(w.customTaskId===id)w.customTaskId=null;});
+  _renderTaskMgr();
+  renderTaskFilterBtns();
+  renderGantt();
+}
+function renderTaskFilterBtns(){
+  const c=document.getElementById('taskFilterBtns');
+  if(!c||curDay!==2) return;
+  const tasks=DAYS[2].customTasks||[];
+  let h=`<div class="flt-btn on" id="f27-all" onclick="setFilter27('all')">전체</div>`;
+  tasks.forEach(t=>{
+    const on=curFilter27===t.id;
+    h+=`<div class="flt-btn${on?' on':''}" id="f27-${t.id}" style="${on?`background:${t.color};border-color:${t.color};color:#fff`:''}" onclick="setFilter27(${t.id})">${t.name}</div>`;
+  });
+  h+=`<div class="flt-btn${curFilter27==='none'?' on':''}" id="f27-none" onclick="setFilter27('none')">미배당</div>`;
+  c.innerHTML=h;
+  document.querySelectorAll('#taskFilterBtns .flt-btn').forEach(el=>el.classList.toggle('on',el.id===`f27-${curFilter27}`||( curFilter27==='all'&&el.id==='f27-all')));
+}
+function setFilter27(val){
+  curFilter27=val;
+  renderTaskFilterBtns();
+  renderGantt();
+}
+function openTaskDropdown(el,workerName){
+  closeTaskDropdown();
+  const d=DAYS[2];
+  const tasks=d.customTasks||[];
+  const w=d.workers.find(x=>x.name===workerName);
+  const rect=el.getBoundingClientRect();
+  const dd=document.createElement('div');
+  dd.className='task-dropdown';
+  dd.id='taskDropdown';
+  dd.style.cssText=`top:${rect.bottom+4}px;left:${rect.left}px`;
+  let h=`<div class="task-dd-item${w&&w.customTaskId==null?' active':''}" onclick="assignWorkerTask('${workerName}',null)"><span class="task-dd-dot" style="background:#ccc;border:1px solid #aaa"></span>임무 없음</div>`;
+  if(tasks.length>0) h+=`<div class="task-dd-sep"></div>`;
+  tasks.forEach(t=>{
+    const active=w&&w.customTaskId===t.id;
+    h+=`<div class="task-dd-item${active?' active':''}" onclick="assignWorkerTask('${workerName}',${t.id})"><span class="task-dd-dot" style="background:${t.color}"></span>${t.name}${active?' ✓':''}</div>`;
+  });
+  if(tasks.length===0) h+=`<div style="padding:8px 10px;font-size:11px;color:var(--muted)">⚙ 임무 관리에서 먼저 추가해주세요</div>`;
+  dd.innerHTML=h;
+  document.body.appendChild(dd);
+  const dr=dd.getBoundingClientRect();
+  if(dr.right>window.innerWidth-8) dd.style.left=(window.innerWidth-dr.width-8)+'px';
+  if(dr.bottom>window.innerHeight-8) dd.style.top=(rect.top-dr.height-4)+'px';
+  setTimeout(()=>document.addEventListener('click',_ddOutside,{once:true}),0);
+}
+function _ddOutside(e){
+  const dd=document.getElementById('taskDropdown');
+  if(dd&&!dd.contains(e.target)) closeTaskDropdown();
+  else document.addEventListener('click',_ddOutside,{once:true});
+}
+function closeTaskDropdown(){
+  const dd=document.getElementById('taskDropdown');
+  if(dd) dd.remove();
+}
+function assignWorkerTask(workerName,taskId){
+  const w=DAYS[2].workers.find(x=>x.name===workerName);
+  if(w) w.customTaskId=taskId;
+  closeTaskDropdown();
+  renderGantt();
+}
+
+// ═══════════════════════════════════════════════════
+// AUTO-SCROLL: 근무 시작 시간 자동 스크롤
+// ═══════════════════════════════════════════════════
+function scrollToWorkStart(){
+  setTimeout(()=>{
+    const scroll=document.getElementById('ganttScroll');
+    if(!scroll) return;
+    const LW=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--lw'))||260;
+    const HW=hw();
+    const panel=document.getElementById('ganttPanel');
+    if(!panel) return;
+    const panelW=panel.clientWidth;
+    // 근무 시작 1시간 전(12:00)부터 보이도록 스크롤
+    const targetH=12; // 13:00 근무 시작 1h 전
+    const targetPx=LW+targetH*HW;
+    // 이미 패널 안에 충분히 보이면 스크롤 불필요
+    if(targetPx>panelW*0.6){
+      const margin=panelW*0.08;
+      scroll.scrollLeft=Math.max(0,targetPx-margin);
+    }
+  },60);
 }
 
 // ═══════════════════════════════════════════════════
@@ -1577,5 +1832,23 @@ window.addEventListener('resize',()=>{
   },200);
 });
 </script>
+<!-- 임무 관리 모달 (27일 전용) -->
+<div class="task-mgr-overlay" id="taskMgrOverlay" style="display:none" onclick="if(event.target===this)closeTaskManager()">
+  <div class="task-mgr">
+    <div class="task-mgr-title">
+      <h3>⚙ 임무 관리 <span style="font-size:11px;color:var(--muted);font-weight:400">(27일 본공연 전용)</span></h3>
+      <span class="task-mgr-close" onclick="closeTaskManager()">✕</span>
+    </div>
+    <div class="task-list" id="taskMgrList"></div>
+    <div class="task-add-form">
+      <div class="task-add-form-row">
+        <input type="text" class="task-name-input" id="taskNameInp" placeholder="임무명 입력..." maxlength="20" onkeydown="if(event.key==='Enter')addCustomTask()">
+        <button class="task-add-btn" onclick="addCustomTask()">＋ 추가</button>
+      </div>
+      <div class="color-swatches" id="taskSwatches"></div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
